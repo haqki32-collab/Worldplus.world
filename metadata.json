@@ -1,0 +1,6 @@
+{
+  "name": "WorldPlus",
+  "description": "AI-powered global news and trending content platform for worldplus.world with automated multi-agent trend discovery and publishing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

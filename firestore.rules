@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Articles collection
+    match /articles/{articleId} {
+      allow read: if true;
+      allow create, update, delete: if true; // Managed via server & admin
+    }
+
+    // Categories collection
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Countries collection
+    match /countries/{countryCode} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Trends collection
+    match /trends/{trendId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Automation logs
+    match /logs/{logId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Site settings & metadata
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}
