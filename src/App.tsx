@@ -18,12 +18,20 @@ import { CookieConsent } from './components/CookieConsent.js';
 import { AdSenseBanner } from './components/AdSenseBanner.js';
 import { Article, Category, Country, TrendItem } from './types.js';
 import { Sparkles, Radio, RefreshCw, Check } from 'lucide-react';
+import { INITIAL_ARTICLES, INITIAL_CATEGORIES, INITIAL_COUNTRIES, INITIAL_TRENDS } from './data/initialData.js';
+import { 
+  subscribeToFirestoreArticles, 
+  fetchArticlesFromFirestore, 
+  likeArticleInFirestore, 
+  saveArticleToFirestore,
+  seedFirestoreIfEmpty
+} from './lib/firestoreClient.js';
 
 export default function App() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [trends, setTrends] = useState<TrendItem[]>([]);
+  const [articles, setArticles] = useState<Article[]>(INITIAL_ARTICLES);
+  const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES);
+  const [countries, setCountries] = useState<Country[]>(INITIAL_COUNTRIES);
+  const [trends, setTrends] = useState<TrendItem[]>(INITIAL_TRENDS);
   
   const [currentView, setCurrentView] = useState<'home' | 'article' | 'category' | 'country' | 'policy' | 'admin'>('home');
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
@@ -35,7 +43,7 @@ export default function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // URL Routing Parser helper
   const syncRouteFromPath = (path: string, currentArticles: Article[], currentCats: Category[], currentCountries: Country[]) => {
@@ -87,7 +95,7 @@ export default function App() {
     setCurrentView('home');
   };
 
-  // Fetch all initial data with resilience and retry support
+  // Fetch all initial data with resilience, API backend check, and Firestore synchronization
   const fetchData = async (retryCount = 0) => {
     try {
       const [artRes, catRes, countRes, trendRes] = await Promise.all([
@@ -97,29 +105,57 @@ export default function App() {
         fetch('/api/trends').catch(() => null)
       ]);
 
-      const artJson = artRes && artRes.ok ? await artRes.json() : [];
-      const catJson = catRes && catRes.ok ? await catRes.json() : [];
-      const countJson = countRes && countRes.ok ? await countRes.json() : [];
-      const trendJson = trendRes && trendRes.ok ? await trendRes.json() : [];
+      const artJson = artRes && artRes.ok ? await artRes.json() : null;
+      const catJson = catRes && catRes.ok ? await catRes.json() : null;
+      const countJson = countRes && countRes.ok ? await countRes.json() : null;
+      const trendJson = trendRes && trendRes.ok ? await trendRes.json() : null;
 
-      if (artJson.length > 0) setArticles(artJson);
-      if (catJson.length > 0) setCategories(catJson);
-      if (countJson.length > 0) setCountries(countJson);
-      if (trendJson.length > 0) setTrends(trendJson);
+      if (artJson && Array.isArray(artJson) && artJson.length > 0) {
+        setArticles(artJson);
+      } else {
+        // Fetch from Firestore directly if API is absent or empty
+        const firestoreArts = await fetchArticlesFromFirestore();
+        if (firestoreArts && firestoreArts.length > 0) {
+          setArticles(firestoreArts);
+        }
+      }
+
+      if (catJson && Array.isArray(catJson) && catJson.length > 0) setCategories(catJson);
+      if (countJson && Array.isArray(countJson) && countJson.length > 0) setCountries(countJson);
+      if (trendJson && Array.isArray(trendJson) && trendJson.length > 0) setTrends(trendJson);
 
       // Parse initial route from browser URL
-      syncRouteFromPath(window.location.pathname, artJson, catJson, countJson);
+      syncRouteFromPath(
+        window.location.pathname, 
+        artJson && artJson.length > 0 ? artJson : INITIAL_ARTICLES, 
+        catJson && catJson.length > 0 ? catJson : INITIAL_CATEGORIES, 
+        countJson && countJson.length > 0 ? countJson : INITIAL_COUNTRIES
+      );
     } catch (err) {
       if (retryCount < 2) {
         setTimeout(() => fetchData(retryCount + 1), 1000);
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchData();
+
+    // Direct real-time listener to Firestore articles collection
+    const unsubscribeFirestore = subscribeToFirestoreArticles((liveArticles) => {
+      if (liveArticles && liveArticles.length > 0) {
+        setArticles(prev => {
+          if (liveArticles.length > prev.length && prev.length > 0) {
+            const latest = liveArticles[0];
+            showToast(`New story published live: "${latest.title.slice(0, 45)}..."`);
+          }
+          return liveArticles;
+        });
+      }
+    });
+
+    // Ensure Firestore has seed articles
+    seedFirestoreIfEmpty().catch(console.warn);
 
     // Listen for browser Back and Forward history buttons
     const handlePopState = () => {
@@ -166,6 +202,7 @@ export default function App() {
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      unsubscribeFirestore();
       window.removeEventListener('popstate', handlePopState);
       window.removeEventListener('keydown', handleKeyDown);
       clearInterval(pollInterval);
@@ -218,7 +255,8 @@ export default function App() {
 
   const handleLikeArticle = async (articleId: string) => {
     try {
-      await fetch(`/api/articles/${articleId}/like`, { method: 'POST' });
+      likeArticleInFirestore(articleId);
+      await fetch(`/api/articles/${articleId}/like`, { method: 'POST' }).catch(() => null);
     } catch (err) {
       console.error(err);
     }
@@ -239,7 +277,8 @@ export default function App() {
       });
       const data = await res.json();
       if (data.article) {
-        setArticles(prev => [data.article, ...prev]);
+        saveArticleToFirestore(data.article);
+        setArticles(prev => [data.article, ...prev.filter(a => a.id !== data.article.id)]);
         handleSelectArticle(data.article);
         showToast('Article generated and published live!');
       }
