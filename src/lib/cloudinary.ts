@@ -14,7 +14,25 @@ export interface CloudinaryTransformOptions {
   gravity?: 'auto' | 'face' | 'center';
 }
 
-const DEFAULT_CLOUDINARY_CLOUD_NAME = 'worldplus-media';
+const DEFAULT_CLOUDINARY_CLOUD_NAME = typeof window !== 'undefined' 
+  ? (localStorage.getItem('worldplus_cloudinary_cloud_name') || 'worldplus-media')
+  : 'worldplus-media';
+
+/**
+ * Configure or get Cloudinary settings
+ */
+export function getCloudinaryCloudName(): string {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('worldplus_cloudinary_cloud_name') || 'worldplus-media';
+  }
+  return 'worldplus-media';
+}
+
+export function setCloudinaryCloudName(name: string): void {
+  if (typeof window !== 'undefined' && name.trim()) {
+    localStorage.setItem('worldplus_cloudinary_cloud_name', name.trim());
+  }
+}
 
 /**
  * Optimizes an image URL via Cloudinary fetch delivery or direct Cloudinary asset transformation.

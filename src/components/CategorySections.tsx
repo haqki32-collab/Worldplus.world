@@ -77,9 +77,9 @@ export const CategorySections: React.FC<CategorySectionsProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent"></div>
                 <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs text-white">
                   <span className="bg-amber-500 text-neutral-950 font-bold px-2.5 py-0.5 rounded uppercase text-[10px] tracking-wider">
-                    {leadArticle.subcategoryName || leadArticle.categoryName}
+                    {leadArticle.subcategoryName || leadArticle.categoryName || currentCategory.name}
                   </span>
-                  <span className="font-mono text-neutral-300">{leadArticle.countryName}</span>
+                  <span className="font-mono text-neutral-300">{leadArticle.countryName || 'Global'}</span>
                 </div>
               </div>
 
@@ -96,7 +96,7 @@ export const CategorySections: React.FC<CategorySectionsProps> = ({
                     <ShieldCheck className="w-3.5 h-3.5" />
                     <span>Fact Checked</span>
                   </span>
-                  <span className="font-mono">{leadArticle.seo.readingTimeMinutes} min read</span>
+                  <span className="font-mono">{leadArticle.seo?.readingTimeMinutes || 4} min read</span>
                 </div>
               </div>
             </div>
@@ -123,10 +123,10 @@ export const CategorySections: React.FC<CategorySectionsProps> = ({
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center space-x-2 text-[10px] font-mono text-neutral-400">
                       <span className="text-amber-600 dark:text-amber-400 uppercase font-bold">
-                        {article.subcategoryName || article.categoryName}
+                        {article.subcategoryName || article.categoryName || currentCategory.name}
                       </span>
                       <span>•</span>
-                      <span>{article.countryName}</span>
+                      <span>{article.countryName || 'Global'}</span>
                     </div>
                     <h4 className="font-serif font-bold text-sm text-neutral-900 dark:text-white leading-snug group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
                       {article.title}

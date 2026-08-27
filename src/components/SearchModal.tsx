@@ -31,13 +31,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   const filtered = query.trim() === ''
     ? articles.slice(0, 5)
     : articles.filter(a => {
+        if (!a) return false;
         const q = query.toLowerCase();
         return (
-          a.title.toLowerCase().includes(q) ||
-          a.shortSummary.toLowerCase().includes(q) ||
-          a.categoryName.toLowerCase().includes(q) ||
-          a.countryName.toLowerCase().includes(q) ||
-          a.seo.relatedKeywords.some(k => k.toLowerCase().includes(q))
+          (a.title || '').toLowerCase().includes(q) ||
+          (a.shortSummary || '').toLowerCase().includes(q) ||
+          (a.categoryName || '').toLowerCase().includes(q) ||
+          (a.countryName || '').toLowerCase().includes(q) ||
+          (a.seo?.relatedKeywords || []).some(k => (k || '').toLowerCase().includes(q))
         );
       });
 

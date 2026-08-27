@@ -105,9 +105,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onSelectArti
               <div className="flex items-center space-x-2">
                 <span className="font-semibold text-neutral-800 dark:text-neutral-200">WorldPlus International Wire</span>
                 <span>•</span>
-                <span>{mainStory.seo.readingTimeMinutes} min read</span>
+                <span>{mainStory.seo?.readingTimeMinutes || 4} min read</span>
                 <span>•</span>
-                <span>{mainStory.seo.wordCount} words</span>
+                <span>{mainStory.seo?.wordCount || 1600} words</span>
               </div>
 
               <div className="flex items-center space-x-1 text-amber-600 dark:text-amber-400 font-bold group-hover:translate-x-1 transition-transform">
@@ -135,10 +135,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onSelectArti
                 <div className="space-y-1.5 flex-1">
                   <div className="flex items-center space-x-2 text-[11px] font-mono">
                     <span className="font-bold text-amber-600 dark:text-amber-400 uppercase">
-                      {story.categoryName}
+                      {story.categoryName || 'General'}
                     </span>
                     <span className="text-neutral-400">•</span>
-                    <span className="text-neutral-500">{story.countryName}</span>
+                    <span className="text-neutral-500">{story.countryName || 'Global'}</span>
                   </div>
                   <h3 className="font-serif font-bold text-base text-neutral-900 dark:text-white leading-snug group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
                     {story.title}

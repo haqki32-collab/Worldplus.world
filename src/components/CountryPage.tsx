@@ -71,9 +71,9 @@ export const CountryPage: React.FC<CountryPageProps> = ({
                 </div>
                 <div className="p-5 space-y-2">
                   <div className="flex items-center space-x-2 text-[10px] font-mono text-neutral-400">
-                    <span className="text-amber-500 font-bold uppercase">{article.categoryName}</span>
+                    <span className="text-amber-500 font-bold uppercase">{article.categoryName || 'General'}</span>
                     <span>•</span>
-                    <span>{article.seo.readingTimeMinutes} min read</span>
+                    <span>{article.seo?.readingTimeMinutes || 4} min read</span>
                   </div>
                   <h3 className="font-serif font-bold text-base text-neutral-900 dark:text-white leading-snug group-hover:text-amber-500 transition-colors line-clamp-2">
                     {article.title}
@@ -85,8 +85,8 @@ export const CountryPage: React.FC<CountryPageProps> = ({
               </div>
 
               <div className="px-5 pb-5 pt-2 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between text-xs font-mono text-neutral-400">
-                <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
-                <span className="text-amber-500">{article.opportunityScore} Score</span>
+                <span>{article.publishedAt ? new Date(article.publishedAt).toLocaleDateString() : 'Recent'}</span>
+                <span className="text-amber-500">{article.opportunityScore || 90} Score</span>
               </div>
             </div>
           ))}

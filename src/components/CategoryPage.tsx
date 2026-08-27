@@ -111,9 +111,9 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
               <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center space-x-2 text-xs font-mono text-neutral-400 mb-3">
-                    <span className="text-amber-500 font-bold uppercase">{leadStory.subcategoryName || leadStory.categoryName}</span>
+                    <span className="text-amber-500 font-bold uppercase">{leadStory.subcategoryName || leadStory.categoryName || category.name}</span>
                     <span>•</span>
-                    <span>{leadStory.countryName}</span>
+                    <span>{leadStory.countryName || 'Global'}</span>
                   </div>
 
                   <h2 className="font-serif font-black text-2xl sm:text-3xl text-neutral-900 dark:text-white leading-tight group-hover:text-amber-500 transition-colors mb-4">
@@ -126,8 +126,8 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
                 </div>
 
                 <div className="pt-4 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between text-xs text-neutral-400 font-mono">
-                  <span>{leadStory.seo.readingTimeMinutes} min read</span>
-                  <span className="text-amber-500 font-bold">Trend Score: {leadStory.opportunityScore}/100</span>
+                  <span>{leadStory.seo?.readingTimeMinutes || 4} min read</span>
+                  <span className="text-amber-500 font-bold">Trend Score: {leadStory.opportunityScore || 90}/100</span>
                 </div>
               </div>
             </div>
@@ -153,9 +153,9 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
                     </div>
                     <div className="p-5 space-y-2">
                       <div className="flex items-center space-x-2 text-[10px] font-mono text-neutral-400">
-                        <span className="text-amber-500 font-bold uppercase">{art.subcategoryName || art.categoryName}</span>
+                        <span className="text-amber-500 font-bold uppercase">{art.subcategoryName || art.categoryName || category.name}</span>
                         <span>•</span>
-                        <span>{art.countryName}</span>
+                        <span>{art.countryName || 'Global'}</span>
                       </div>
                       <h3 className="font-serif font-bold text-base text-neutral-900 dark:text-white leading-snug group-hover:text-amber-500 transition-colors line-clamp-2">
                         {art.title}
@@ -167,8 +167,8 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
                   </div>
 
                   <div className="px-5 pb-5 pt-2 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between text-xs font-mono text-neutral-400">
-                    <span>{new Date(art.publishedAt).toLocaleDateString()}</span>
-                    <span className="text-amber-500">{art.opportunityScore} Score</span>
+                    <span>{art.publishedAt ? new Date(art.publishedAt).toLocaleDateString() : 'Recent'}</span>
+                    <span className="text-amber-500">{art.opportunityScore || 90} Score</span>
                   </div>
                 </div>
               ))}

@@ -36,9 +36,9 @@ export const MostPopularSection: React.FC<MostPopularSectionProps> = ({ articles
 
             <div className="flex-1 space-y-1">
               <div className="flex items-center space-x-2 text-[10px] font-mono">
-                <span className="text-amber-600 dark:text-amber-400 font-bold uppercase">{article.categoryName}</span>
+                <span className="text-amber-600 dark:text-amber-400 font-bold uppercase">{article.categoryName || 'General'}</span>
                 <span className="text-neutral-400">•</span>
-                <span className="text-neutral-500">{article.countryName}</span>
+                <span className="text-neutral-500">{article.countryName || 'Global'}</span>
               </div>
 
               <h3 className="font-serif font-bold text-sm text-neutral-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors leading-snug line-clamp-2">
@@ -48,11 +48,11 @@ export const MostPopularSection: React.FC<MostPopularSectionProps> = ({ articles
               <div className="flex items-center space-x-3 text-[10px] text-neutral-400 font-mono pt-1">
                 <span className="flex items-center space-x-1">
                   <Eye className="w-3 h-3" />
-                  <span>{article.viewCount.toLocaleString()} views</span>
+                  <span>{(article.viewCount || 0).toLocaleString()} views</span>
                 </span>
                 <span>•</span>
                 <span className="text-amber-500 font-medium">
-                  {article.opportunityScore} Score
+                  {article.opportunityScore || 90} Score
                 </span>
               </div>
             </div>

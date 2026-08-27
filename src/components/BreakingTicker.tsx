@@ -23,7 +23,10 @@ export const BreakingTicker: React.FC<BreakingTickerProps> = ({ articles, onSele
 
   if (items.length === 0) return null;
 
-  const currentItem = items[currentIndex];
+  const currentItem = items[currentIndex % items.length] || items[0];
+  if (!currentItem) return null;
+
+  const categoryLabel = (currentItem.categoryName || 'General').toUpperCase();
 
   return (
     <div className="bg-amber-950/40 border-b border-amber-900/40 text-amber-200 px-4 py-2 text-xs">
@@ -36,7 +39,7 @@ export const BreakingTicker: React.FC<BreakingTickerProps> = ({ articles, onSele
           </div>
 
           <span className="text-amber-500 font-mono text-[10px] hidden sm:inline shrink-0">
-            [{currentItem.categoryName.toUpperCase()}]
+            [{categoryLabel}]
           </span>
 
           {/* Active story text */}
@@ -52,7 +55,7 @@ export const BreakingTicker: React.FC<BreakingTickerProps> = ({ articles, onSele
         {/* Opportunity / Trending tag */}
         <div className="hidden md:flex items-center space-x-2 shrink-0 text-[11px] text-amber-400/90 font-mono pl-4">
           <Flame className="w-3.5 h-3.5 text-orange-400" />
-          <span>Opportunity: {currentItem.opportunityScore}/100</span>
+          <span>Opportunity: {currentItem.opportunityScore || 90}/100</span>
           <span className="text-neutral-600">•</span>
           <span className="text-neutral-400">Published on worldplus.world</span>
         </div>

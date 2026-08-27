@@ -102,13 +102,13 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
               "url": "https://worldplus.world/logo.png"
             }
           },
-          "keywords": article.seo.relatedKeywords.join(', '),
-          "articleSection": article.categoryName,
+          "keywords": (article.seo?.relatedKeywords || []).join(', '),
+          "articleSection": article.categoryName || 'General',
           "inLanguage": "en-US"
         },
         {
           "@type": "BreadcrumbList",
-          "@id": `${article.seo.canonicalUrl}#breadcrumb`,
+          "@id": `${article.seo?.canonicalUrl || 'https://worldplus.world'}#breadcrumb`,
           "itemListElement": [
             {
               "@type": "ListItem",
@@ -119,14 +119,14 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
             {
               "@type": "ListItem",
               "position": 2,
-              "name": article.categoryName,
-              "item": `https://worldplus.world/category/${article.categoryId}`
+              "name": article.categoryName || 'General',
+              "item": `https://worldplus.world/category/${article.categoryId || 'general'}`
             },
             {
               "@type": "ListItem",
               "position": 3,
               "name": article.title,
-              "item": article.seo.canonicalUrl
+              "item": article.seo?.canonicalUrl || 'https://worldplus.world'
             }
           ]
         },
@@ -214,16 +214,16 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
         <div className="flex items-center space-x-2 text-xs font-mono text-neutral-400">
           <span>worldplus.world</span>
           <span>/</span>
-          <span className="text-amber-500 uppercase">{article.categoryName}</span>
+          <span className="text-amber-500 uppercase">{article.categoryName || 'General'}</span>
           <span>/</span>
-          <span className="truncate max-w-[150px]">{article.seo.slug}</span>
+          <span className="truncate max-w-[150px]">{article.seo?.slug || 'story'}</span>
         </div>
       </div>
 
       {/* Category, Badges, Opportunity Score */}
       <div className="flex flex-wrap items-center gap-2.5 mb-4">
         <span className="px-3 py-1 bg-amber-500 text-neutral-950 font-bold uppercase text-xs tracking-wider rounded-md">
-          {article.categoryName}
+          {article.categoryName || 'General'}
         </span>
         {article.subcategoryName && (
           <span className="px-2.5 py-1 bg-neutral-200 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs font-medium rounded-md">
@@ -232,7 +232,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
         )}
         <span className="px-2.5 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 text-xs font-mono rounded-md flex items-center space-x-1">
           <Globe className="w-3 h-3" />
-          <span>{article.countryName}</span>
+          <span>{article.countryName || 'Global'}</span>
         </span>
         {article.isBreaking && (
           <span className="px-2.5 py-1 bg-red-600 text-white font-bold uppercase text-xs tracking-wider rounded-md animate-pulse">
@@ -639,7 +639,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
                   </div>
                   <div className="p-4 space-y-2">
                     <span className="text-[10px] font-mono font-bold text-amber-500 uppercase">
-                      {rel.categoryName}
+                      {rel.categoryName || 'General'}
                     </span>
                     <h4 className="font-serif font-bold text-sm text-neutral-900 dark:text-white group-hover:text-amber-500 transition-colors line-clamp-2">
                       {rel.title}
@@ -648,8 +648,8 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
                 </div>
 
                 <div className="p-4 pt-0 text-[11px] font-mono text-neutral-400 flex items-center justify-between border-t border-neutral-100 dark:border-neutral-800/80">
-                  <span>{rel.countryName}</span>
-                  <span className="text-amber-500">{rel.opportunityScore} Score</span>
+                  <span>{rel.countryName || 'Global'}</span>
+                  <span className="text-amber-500">{rel.opportunityScore || 90} Score</span>
                 </div>
               </div>
             ))}

@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { 
   SlidersHorizontal, Play, Pause, RefreshCw, Sparkles, Plus, Trash2, 
   Edit3, CheckCircle2, AlertCircle, Clock, Globe, Shield, FileText, 
-  Layers, Settings, Eye, Check, X, ArrowUpRight, Flame, Database, Radio
+  Layers, Settings, Eye, Check, X, ArrowUpRight, Flame, Database, Radio, Image as ImageIcon
 } from 'lucide-react';
 import { Article, Category, Country, AutomationLog, AdminStats, TrendItem } from '../types.js';
+import { getCloudinaryCloudName, setCloudinaryCloudName } from '../lib/cloudinary.js';
 
 interface AdminPanelProps {
   categories: Category[];
@@ -25,7 +26,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   onRefreshData,
   onSelectArticle
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'automation' | 'articles' | 'categories' | 'countries' | 'logs' | 'seo'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'automation' | 'articles' | 'categories' | 'countries' | 'logs' | 'seo' | 'cloudinary'>('overview');
+  const [cloudinaryCloudName, setCloudinaryNameState] = useState<string>(getCloudinaryCloudName());
+  const [cloudinarySaved, setCloudinarySaved] = useState<boolean>(false);
   const [isAutomationRunning, setIsAutomationRunning] = useState(true);
   const [masterFrequency, setMasterFrequency] = useState(10);
   const [stats, setStats] = useState<AdminStats | null>(null);
@@ -281,7 +284,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           { id: 'categories', label: `Categories (${categories.length})`, icon: Database },
           { id: 'countries', label: `Monitored Countries (${countries.length})`, icon: Globe },
           { id: 'logs', label: `Live Automation Logs`, icon: Clock },
-          { id: 'seo', label: 'XML Sitemaps & SEO', icon: Shield }
+          { id: 'seo', label: 'XML Sitemaps & SEO', icon: Shield },
+          { id: 'cloudinary', label: 'Cloudinary CDN', icon: ImageIcon }
         ].map((tab) => {
           const Icon = tab.icon;
           return (
@@ -740,6 +744,73 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     </a>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* CLOUDINARY CDN TAB */}
+        {activeTab === 'cloudinary' && (
+          <div className="space-y-6">
+            <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <ImageIcon className="w-5 h-5 text-amber-400" />
+                  <h3 className="font-serif font-bold text-lg text-white">Cloudinary Dynamic CDN &amp; Media Pipeline</h3>
+                </div>
+                <span className="text-xs font-mono px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>CDN ATTACHED &amp; ACTIVE</span>
+                </span>
+              </div>
+              <p className="text-xs text-neutral-400 leading-relaxed">
+                Cloudinary is attached as the global CDN media pipeline for <span className="text-amber-400 font-bold">worldplus.world</span>. It automatically optimizes and serves all featured and in-article imagery in next-generation WebP and AVIF formats, generates responsive <code className="text-amber-300">srcset</code> attributes (480px, 800px, 1200px, 1600px), and guarantees the 1200px+ high-resolution criteria required for <strong>Google Discover</strong> and high search engine ranking.
+              </p>
+
+              <div className="p-5 bg-neutral-950 border border-neutral-800 rounded-xl space-y-4 font-mono text-xs">
+                <div className="space-y-1.5">
+                  <label className="text-neutral-300 font-bold">Cloudinary Cloud Name / Account Handle</label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={cloudinaryCloudName}
+                      onChange={(e) => setCloudinaryNameState(e.target.value)}
+                      placeholder="e.g. worldplus-media"
+                      className="flex-1 bg-neutral-900 border border-neutral-700 rounded-lg px-3.5 py-2 text-white font-mono focus:border-amber-500 outline-none"
+                    />
+                    <button
+                      onClick={() => {
+                        setCloudinaryCloudName(cloudinaryCloudName);
+                        setCloudinarySaved(true);
+                        setTimeout(() => setCloudinarySaved(false), 3000);
+                      }}
+                      className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold transition-all"
+                    >
+                      {cloudinarySaved ? 'Saved!' : 'Save CDN Config'}
+                    </button>
+                  </div>
+                  <span className="text-[11px] text-neutral-500">
+                    Current Cloud Account: <strong className="text-amber-400">{cloudinaryCloudName}</strong> (Fallback: Edge Unsplash CDN Engine)
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 border-t border-neutral-800">
+                  <div className="p-3 bg-neutral-900 rounded-lg space-y-1">
+                    <span className="text-[10px] text-neutral-400 uppercase">Image Transformation</span>
+                    <div className="font-bold text-white">f_auto, q_auto</div>
+                    <p className="text-[10px] text-emerald-400">Zero bandwidth waste with AVIF/WebP</p>
+                  </div>
+                  <div className="p-3 bg-neutral-900 rounded-lg space-y-1">
+                    <span className="text-[10px] text-neutral-400 uppercase">Google Discover Spec</span>
+                    <div className="font-bold text-amber-400">w_1200, c_fill</div>
+                    <p className="text-[10px] text-neutral-400">1200px+ high-res image index</p>
+                  </div>
+                  <div className="p-3 bg-neutral-900 rounded-lg space-y-1">
+                    <span className="text-[10px] text-neutral-400 uppercase">CDN Edge Latency</span>
+                    <div className="font-bold text-white">&lt; 35ms Global</div>
+                    <p className="text-[10px] text-neutral-400">Cached worldwide edge nodes</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

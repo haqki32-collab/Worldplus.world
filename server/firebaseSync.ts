@@ -24,12 +24,34 @@ export function getFirestoreSync() {
   return null;
 }
 
+export function sanitizeForFirestore(val: any): any {
+  if (val === undefined) {
+    return null;
+  }
+  if (val === null || typeof val !== 'object') {
+    return val;
+  }
+  if (Array.isArray(val)) {
+    return val
+      .filter(item => item !== undefined)
+      .map(item => sanitizeForFirestore(item));
+  }
+  const cleanObj: Record<string, any> = {};
+  for (const [k, v] of Object.entries(val)) {
+    if (v !== undefined) {
+      cleanObj[k] = sanitizeForFirestore(v);
+    }
+  }
+  return cleanObj;
+}
+
 export async function persistArticleToFirestore(article: Article) {
   try {
     const db = getFirestoreSync();
     if (!db) return;
     const docRef = doc(db, 'articles', article.id);
-    await setDoc(docRef, article, { merge: true });
+    const sanitized = sanitizeForFirestore(article);
+    await setDoc(docRef, sanitized, { merge: true });
     console.log(`📡 Persisted article "${article.title.slice(0, 30)}..." to Firestore collection: articles/${article.id}`);
   } catch (err) {
     console.error('Error persisting article to Firestore:', err);

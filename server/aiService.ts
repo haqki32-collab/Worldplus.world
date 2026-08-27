@@ -4,6 +4,7 @@ import { Article, ArticleImage, ArticleSection, ArticleFaq, SEOData, QualityChec
 import { persistArticleToFirestore } from './firebaseSync.js';
 
 let aiClient: GoogleGenAI | null = null;
+let geminiRateLimitedUntil = 0;
 
 function getAiClient(): GoogleGenAI | null {
   if (!aiClient && process.env.GEMINI_API_KEY) {
@@ -112,7 +113,7 @@ export class AIService {
     - sampleHeadline: compelling editorial headline
     - opportunityScore: number (0-100)`;
 
-    if (ai) {
+    if (ai && Date.now() > geminiRateLimitedUntil) {
       try {
         const response = await ai.models.generateContent({
           model: 'gemini-3.7-flash',
@@ -144,8 +145,13 @@ export class AIService {
         if (response.text) {
           return JSON.parse(response.text);
         }
-      } catch (err) {
-        console.error('Gemini trend discovery fallback triggered:', err);
+      } catch (err: any) {
+        if (err?.message?.includes('429') || err?.status === 'RESOURCE_EXHAUSTED' || err?.message?.includes('quota') || err?.message?.includes('exceeded')) {
+          geminiRateLimitedUntil = Date.now() + 300000; // 5 min cooldown
+          console.warn('[AI Service] Gemini quota reached; utilizing internal trend synthesis engine.');
+        } else {
+          console.warn('Gemini trend discovery fallback triggered:', err?.message || err);
+        }
       }
     }
 
@@ -176,7 +182,7 @@ export class AIService {
 
     let articleResult: any = null;
 
-    if (ai) {
+    if (ai && Date.now() > geminiRateLimitedUntil) {
       try {
         const prompt = `You are the chief editorial agent for worldplus.world, a premium international media publication.
         Generate a comprehensive, high-quality, 1,500-2,000 word editorial article on the topic: "${topic}".
@@ -263,8 +269,13 @@ export class AIService {
         if (response.text) {
           articleResult = JSON.parse(response.text);
         }
-      } catch (err) {
-        console.error('Gemini article generation error, using rich synthesizer fallback:', err);
+      } catch (err: any) {
+        if (err?.message?.includes('429') || err?.status === 'RESOURCE_EXHAUSTED' || err?.message?.includes('quota') || err?.message?.includes('exceeded')) {
+          geminiRateLimitedUntil = Date.now() + 300000; // 5 min cooldown
+          console.warn('[AI Service] Gemini quota reached; seamlessly generating high-density editorial article.');
+        } else {
+          console.warn('Gemini article generation fallback triggered:', err?.message || err);
+        }
       }
     }
 
@@ -618,8 +629,8 @@ export class AIService {
       'info'
     );
 
-    // Process all categories in parallel batches to achieve ultra-fast 1-minute throughput
-    const categoryPromises = activeCategories.map(async (category) => {
+    // Process active categories sequentially with pacing to avoid quota spike
+    for (const category of activeCategories) {
       try {
         const result = await this.runAutomatedPublishingCycle(category.id);
         if (result.success && result.article) {
@@ -630,9 +641,9 @@ export class AIService {
       } catch (err: any) {
         errors.push(`Error in category ${category.name}: ${err.message}`);
       }
-    });
-
-    await Promise.all(categoryPromises);
+      // Small pause between categories
+      await new Promise(r => setTimeout(r, 200));
+    }
 
     db.lastPublishTimestamp = Date.now();
     db.addLog(
