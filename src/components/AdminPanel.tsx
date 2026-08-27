@@ -44,23 +44,32 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [genIsBreaking, setGenIsBreaking] = useState(false);
   const [isGeneratingArticle, setIsGeneratingArticle] = useState(false);
 
-  // Load stats and logs
+  // Load stats and logs safely
   const fetchAdminData = async () => {
     try {
-      const statsRes = await fetch('/api/stats');
-      const statsJson = await statsRes.json();
-      setStats(statsJson);
+      const [statsRes, logsRes, autoRes] = await Promise.all([
+        fetch('/api/stats').catch(() => null),
+        fetch('/api/logs?limit=40').catch(() => null),
+        fetch('/api/automation/status').catch(() => null)
+      ]);
 
-      const logsRes = await fetch('/api/logs?limit=40');
-      const logsJson = await logsRes.json();
-      setLogs(logsJson);
+      if (statsRes && statsRes.ok) {
+        const statsJson = await statsRes.json();
+        setStats(statsJson);
+      }
 
-      const autoRes = await fetch('/api/automation/status');
-      const autoJson = await autoRes.json();
-      setIsAutomationRunning(autoJson.isActive);
-      setMasterFrequency(autoJson.masterFrequencyMinutes);
+      if (logsRes && logsRes.ok) {
+        const logsJson = await logsRes.json();
+        setLogs(logsJson);
+      }
+
+      if (autoRes && autoRes.ok) {
+        const autoJson = await autoRes.json();
+        setIsAutomationRunning(autoJson.isActive);
+        setMasterFrequency(autoJson.masterFrequencyMinutes);
+      }
     } catch (err) {
-      console.error('Error fetching admin data:', err);
+      // Silently catch admin polling errors during transient server restarts
     }
   };
 

@@ -27,6 +27,6 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_WORLDPLUSWORLD }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_WORLDPLUS_494C7 || secrets.FIREBASE_SERVICE_ACCOUNT_WORLDPLUSWORLD }}'
           channelId: live
-          projectId: worldplusworld
+          projectId: worldplus-494c7

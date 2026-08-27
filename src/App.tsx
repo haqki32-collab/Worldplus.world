@@ -87,32 +87,32 @@ export default function App() {
     setCurrentView('home');
   };
 
-  // Fetch all initial data
-  const fetchData = async () => {
+  // Fetch all initial data with resilience and retry support
+  const fetchData = async (retryCount = 0) => {
     try {
       const [artRes, catRes, countRes, trendRes] = await Promise.all([
-        fetch('/api/articles?status=published'),
-        fetch('/api/categories'),
-        fetch('/api/countries'),
-        fetch('/api/trends')
+        fetch('/api/articles?status=published').catch(() => null),
+        fetch('/api/categories').catch(() => null),
+        fetch('/api/countries').catch(() => null),
+        fetch('/api/trends').catch(() => null)
       ]);
 
-      const [artJson, catJson, countJson, trendJson] = await Promise.all([
-        artRes.json(),
-        catRes.json(),
-        countRes.json(),
-        trendRes.json()
-      ]);
+      const artJson = artRes && artRes.ok ? await artRes.json() : [];
+      const catJson = catRes && catRes.ok ? await catRes.json() : [];
+      const countJson = countRes && countRes.ok ? await countRes.json() : [];
+      const trendJson = trendRes && trendRes.ok ? await trendRes.json() : [];
 
-      setArticles(artJson);
-      setCategories(catJson);
-      setCountries(countJson);
-      setTrends(trendJson);
+      if (artJson.length > 0) setArticles(artJson);
+      if (catJson.length > 0) setCategories(catJson);
+      if (countJson.length > 0) setCountries(countJson);
+      if (trendJson.length > 0) setTrends(trendJson);
 
       // Parse initial route from browser URL
       syncRouteFromPath(window.location.pathname, artJson, catJson, countJson);
     } catch (err) {
-      console.error('Error loading initial data:', err);
+      if (retryCount < 2) {
+        setTimeout(() => fetchData(retryCount + 1), 1000);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -127,11 +127,13 @@ export default function App() {
     };
     window.addEventListener('popstate', handlePopState);
 
-    // Polling interval to reflect newly auto-published articles
-    const pollInterval = setInterval(() => {
-      fetch('/api/articles?status=published')
-        .then(r => r.json())
-        .then(newArticles => {
+    // Polling interval to reflect newly auto-published articles safely
+    const pollInterval = setInterval(async () => {
+      try {
+        const r = await fetch('/api/articles?status=published');
+        if (!r.ok) return;
+        const newArticles = await r.json();
+        if (Array.isArray(newArticles) && newArticles.length > 0) {
           setArticles(prev => {
             if (newArticles.length > prev.length) {
               const latest = newArticles[0];
@@ -139,8 +141,10 @@ export default function App() {
             }
             return newArticles;
           });
-        })
-        .catch(console.error);
+        }
+      } catch {
+        // Silently skip if network or server is briefly restarting
+      }
     }, 15000);
 
     // Keyboard shortcut for search (⌘K or Ctrl+K) and Admin Portal (Ctrl+Shift+A or ⌘+Shift+A)
@@ -162,9 +166,9 @@ export default function App() {
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      clearInterval(pollInterval);
       window.removeEventListener('popstate', handlePopState);
       window.removeEventListener('keydown', handleKeyDown);
+      clearInterval(pollInterval);
     };
   }, []);
 
