@@ -3,6 +3,7 @@ import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import { db } from './server/db.js';
 import { aiService } from './server/aiService.js';
+import { rssService } from './server/rssService.js';
 import { SitemapService } from './server/sitemapService.js';
 import { persistArticleToFirestore } from './server/firebaseSync.js';
 
@@ -275,6 +276,26 @@ async function startServer() {
     }
   });
 
+  // Live RSS Real News Wire APIs (BBC World, Dawn, Google News, Reuters)
+  app.get('/api/rss/latest', async (req, res) => {
+    try {
+      const items = await rssService.fetchAllGlobalFeeds();
+      res.json({ count: items.length, items });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post('/api/rss/sync', async (req, res) => {
+    try {
+      const limit = req.body?.limit ? parseInt(req.body.limit) : 8;
+      const result = await rssService.syncRealNewsToDatabase(limit);
+      res.json({ success: true, ...result, totalArticles: db.articles.length });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   // Automation Engine APIs
   app.get('/api/automation/status', (req, res) => {
     res.json({
@@ -322,6 +343,11 @@ async function startServer() {
     res.json({ masterFrequencyMinutes: db.masterPublishingFrequencyMinutes });
   });
 
+  // Auto-sync real RSS feeds on startup in the background
+  setTimeout(() => {
+    rssService.syncRealNewsToDatabase(10).catch(e => console.warn('[Startup RSS Sync Note]:', e));
+  }, 2000);
+
   // Background automated interval timer: Runs every 1 minute (60 seconds) publishing across all categories
   setInterval(async () => {
     if (db.isAutomationActive) {
@@ -333,6 +359,11 @@ async function startServer() {
       }
     }
   }, 60 * 1000);
+
+  // Periodic Real News Wire Sync: every 5 minutes pulls fresh breaking BBC & Dawn RSS wire
+  setInterval(() => {
+    rssService.syncRealNewsToDatabase(4).catch(e => console.warn('[Periodic RSS Wire Sync Note]:', e));
+  }, 5 * 60 * 1000);
 
   // Vite middleware setup
   if (process.env.NODE_ENV !== 'production') {

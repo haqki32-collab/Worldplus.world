@@ -380,11 +380,11 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
 
           return (
             <section key={section.id || index} className="space-y-4">
-              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight pt-4 border-t border-neutral-200 dark:border-neutral-800">
+              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 dark:text-white tracking-tight pt-6 border-t border-neutral-200 dark:border-neutral-800">
                 {section.heading}
               </h2>
 
-              <p className="leading-relaxed whitespace-pre-line text-neutral-700 dark:text-neutral-300">
+              <p className={`leading-relaxed whitespace-pre-line text-neutral-700 dark:text-neutral-300 ${index === 0 ? 'drop-cap' : ''}`}>
                 {section.content}
               </p>
 

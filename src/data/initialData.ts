@@ -5,19 +5,21 @@ export const INITIAL_CATEGORIES: Category[] = [
     id: 'news',
     name: 'News & World Affairs',
     slug: 'news',
-    description: 'Breaking global headlines, geopolitics, international diplomacy, national elections, and investigative reporting.',
+    description: 'Breaking global headlines, geopolitics, international diplomacy, regional affairs, and investigative reporting modeled after BBC World, Reuters, and Dawn.',
     iconName: 'Globe',
     subcategories: [
-      { id: 'world-news', name: 'World News & Geopolitics', slug: 'world-news' },
-      { id: 'breaking-news', name: 'Breaking News', slug: 'breaking-news' },
-      { id: 'politics', name: 'National Politics & Elections', slug: 'politics' },
-      { id: 'economy-policy', name: 'Economy & Trade Policies', slug: 'economy-policy' },
-      { id: 'law-crime', name: 'Law & Crime Reporting', slug: 'law-crime' },
-      { id: 'weather-disasters', name: 'Weather & Natural Disasters', slug: 'weather-disasters' }
+      { id: 'world-news', name: 'World News & Geopolitics (BBC/Reuters Desk)', slug: 'world-news' },
+      { id: 'south-asia-regional', name: 'South Asia & Regional Bureau (Dawn/APP Desk)', slug: 'south-asia-regional' },
+      { id: 'breaking-news', name: 'Live Breaking Wire & Dispatches', slug: 'breaking-news' },
+      { id: 'politics-diplomacy', name: 'Diplomacy, Governance & Elections', slug: 'politics-diplomacy' },
+      { id: 'defense-security', name: 'Defense, Security & Strategic Affairs', slug: 'defense-security' },
+      { id: 'economy-trade', name: 'Global Economy & Trade Policies', slug: 'economy-trade' },
+      { id: 'climate-disasters', name: 'Climate Crises & Humanitarian Emergencies', slug: 'climate-disasters' },
+      { id: 'investigations', name: 'Special Investigative Reports', slug: 'investigations' }
     ],
-    publishingFrequency: '10m',
+    publishingFrequency: '5m',
     isAutomated: true,
-    articleCount: 24,
+    articleCount: 48,
     order: 1
   },
   {
@@ -468,22 +470,112 @@ export const INITIAL_COUNTRIES: Country[] = [
 
 export const INITIAL_TRENDS: TrendItem[] = [
   {
+    id: 'trend-nepal-floods',
+    topic: 'Nepal Monsoon Deluge & Kathmandu Valley Flood Emergency',
+    countryCode: 'NP',
+    countryName: 'Nepal',
+    region: 'Asia',
+    categoryId: 'news',
+    categoryName: 'News & World Affairs',
+    trendGrowth: 395,
+    searchInterest: 99,
+    opportunityScore: 98,
+    freshnessScore: 100,
+    duplicateRisk: 6,
+    relatedKeywords: ['Nepal flood rescue', 'Kathmandu Bagmati river', 'Himalayan landslides', 'disaster management relief'],
+    discoveredAt: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
+    status: 'published',
+    sampleHeadline: 'Nepal Monsoon Emergency: Military Airlifts Evacuate Hundreds as Landslides Sever Mountain Highways'
+  },
+  {
+    id: 'trend-cricket-super-over',
+    topic: 'ICC World Championship Final Double Super-Over Thriller',
+    countryCode: 'PK',
+    countryName: 'Pakistan',
+    region: 'Asia',
+    categoryId: 'sports',
+    categoryName: 'Sports',
+    trendGrowth: 340,
+    searchInterest: 100,
+    opportunityScore: 96,
+    freshnessScore: 99,
+    duplicateRisk: 8,
+    relatedKeywords: ['ICC Super-Over final', 'championship death overs', 'stadium attendance record', 'cricket world rankings'],
+    discoveredAt: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
+    status: 'published',
+    sampleHeadline: 'Down to the Millimeter: Double Super-Over Climax Crowns World Champions Before 112,000 Fans'
+  },
+  {
+    id: 'trend-un-climate-pact',
+    topic: 'UN General Assembly $100B Climate Loss & Damage Protocol',
+    countryCode: 'CH',
+    countryName: 'Switzerland',
+    region: 'Europe',
+    categoryId: 'news',
+    categoryName: 'News & World Affairs',
+    trendGrowth: 260,
+    searchInterest: 92,
+    opportunityScore: 94,
+    freshnessScore: 97,
+    duplicateRisk: 10,
+    relatedKeywords: ['UN climate accord', 'loss and damage fund', 'Geneva diplomatic summit', 'vulnerable island states'],
+    discoveredAt: new Date(Date.now() - 1000 * 60 * 35).toISOString(),
+    status: 'published',
+    sampleHeadline: 'UN General Assembly Ratifies Landmark $100B Loss and Damage Climate Relief Protocol in Geneva'
+  },
+  {
+    id: 'trend-ucl-football-thriller',
+    topic: 'UEFA Champions League Quarter-Final Stoppage Time Thriller',
+    countryCode: 'ES',
+    countryName: 'Spain',
+    region: 'Europe',
+    categoryId: 'sports',
+    categoryName: 'Sports',
+    trendGrowth: 310,
+    searchInterest: 97,
+    opportunityScore: 95,
+    freshnessScore: 98,
+    duplicateRisk: 12,
+    relatedKeywords: ['Champions League 94th minute winner', 'quarter final drama', 'European football shocker', 'Bernabeu atmosphere'],
+    discoveredAt: new Date(Date.now() - 1000 * 60 * 40).toISOString(),
+    status: 'published',
+    sampleHeadline: '94th-Minute Stoppage Time Wonder Strike Sends 85,000 Fans Wild in Champions League Knockout Thriller'
+  },
+  {
+    id: 'trend-mrna-cancer-vaccine',
+    topic: 'Personalized mRNA Cancer Vaccine Phase III Clinical Trial Milestone',
+    countryCode: 'GB',
+    countryName: 'United Kingdom',
+    region: 'Europe',
+    categoryId: 'health',
+    categoryName: 'Health & Medical',
+    trendGrowth: 285,
+    searchInterest: 96,
+    opportunityScore: 95,
+    freshnessScore: 98,
+    duplicateRisk: 7,
+    relatedKeywords: ['mRNA oncology vaccine', 'melanoma Phase 3 trial', 'immunotherapy milestone', 'personalized antigen design'],
+    discoveredAt: new Date(Date.now() - 1000 * 60 * 50).toISOString(),
+    status: 'published',
+    sampleHeadline: 'From Lab to Clinic: Universal mRNA Personalized Cancer Vaccine Slashes Melanoma Recurrence by 78%'
+  },
+  {
     id: 'trend-1',
-    topic: 'Next-Generation Reasoning AI Architectures',
+    topic: 'Next-Generation Reasoning AI Architectures & Silicon Breakthroughs',
     countryCode: 'US',
     countryName: 'United States',
     region: 'North America',
     categoryId: 'technology',
-    categoryName: 'Technology',
+    categoryName: 'Computers & Electronics',
     trendGrowth: 280,
     searchInterest: 98,
     opportunityScore: 96,
     freshnessScore: 99,
     duplicateRisk: 12,
-    relatedKeywords: ['autonomous AI agents', 'quantum inference', 'multimodal frontier models', 'AGI benchmarks'],
-    discoveredAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+    relatedKeywords: ['autonomous AI agents', '1.6nm chip fabrication', 'frontier reasoning models', 'TSMC semiconductor node'],
+    discoveredAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
     status: 'published',
-    sampleHeadline: 'Can AI Autonomously Invent? Inside the Lab That Built a Self-Correcting Discovery Engine'
+    sampleHeadline: 'Beyond Trial & Error: How Frontier AI Systems Are Autonomously Formulating Chemistry in Real Time'
   },
   {
     id: 'trend-2',
@@ -491,15 +583,15 @@ export const INITIAL_TRENDS: TrendItem[] = [
     countryCode: 'PK',
     countryName: 'Pakistan',
     region: 'Asia',
-    categoryId: 'business',
-    categoryName: 'Business',
+    categoryId: 'business-industrial',
+    categoryName: 'Business & Industrial',
     trendGrowth: 215,
     searchInterest: 94,
     opportunityScore: 92,
     freshnessScore: 96,
     duplicateRisk: 8,
     relatedKeywords: ['Islamabad tech valley', 'solar grid expansion', 'special tech zones', 'Karachi digital hub'],
-    discoveredAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+    discoveredAt: new Date(Date.now() - 1000 * 60 * 75).toISOString(),
     status: 'published',
     sampleHeadline: 'Powering the Next Wave: Inside Pakistan’s $12B Green Energy and Digital Corridor Accord'
   },
@@ -510,56 +602,606 @@ export const INITIAL_TRENDS: TrendItem[] = [
     countryName: 'Worldwide',
     region: 'Worldwide',
     categoryId: 'finance',
-    categoryName: 'Finance',
+    categoryName: 'Finance & Markets',
     trendGrowth: 190,
     searchInterest: 91,
     opportunityScore: 89,
     freshnessScore: 94,
     duplicateRisk: 15,
     relatedKeywords: ['cross-border liquidity', 'BIS mBridge', 'digital reserve assets', 'instant FX settlement'],
-    discoveredAt: new Date(Date.now() - 1000 * 60 * 80).toISOString(),
+    discoveredAt: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
     status: 'published',
     sampleHeadline: 'The End of the 3-Day Wire: 28 Central Banks Pilot Instant Multi-Currency Settlement'
-  },
-  {
-    id: 'trend-4',
-    topic: 'ICC World Championship Finals Dramatic Super-Over Thriller',
-    countryCode: 'IN',
-    countryName: 'India',
-    region: 'Asia',
-    categoryId: 'sports',
-    categoryName: 'Sports',
-    trendGrowth: 340,
-    searchInterest: 100,
-    opportunityScore: 95,
-    freshnessScore: 100,
-    duplicateRisk: 10,
-    relatedKeywords: ['World Cup super over', 'historic finish', 'cricket rankings', 'stadium attendance record'],
-    discoveredAt: new Date(Date.now() - 1000 * 60 * 25).toISOString(),
-    status: 'published',
-    sampleHeadline: 'Down to the Millimeter: Double Super-Over Climax Crowns World Champions Before 112,000 Fans'
-  },
-  {
-    id: 'trend-5',
-    topic: 'James Webb Space Telescope Atmospheric Biomarker Signature',
-    countryCode: 'GLOBAL',
-    countryName: 'Worldwide',
-    region: 'Worldwide',
-    categoryId: 'science',
-    categoryName: 'Science',
-    trendGrowth: 175,
-    searchInterest: 88,
-    opportunityScore: 91,
-    freshnessScore: 93,
-    duplicateRisk: 5,
-    relatedKeywords: ['exoplanet atmosphere', 'K2-18b spectroscopic analysis', 'habitable zone discovery', 'NASA astrophysics'],
-    discoveredAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
-    status: 'published',
-    sampleHeadline: 'Signs of an Ocean World: What Webb’s Latest Spectrum from Planet K2-18b Actually Reveals'
   }
 ];
 
 export const INITIAL_ARTICLES: Article[] = [
+  {
+    id: 'art-news-nepal-monsoon-floods',
+    title: 'Nepal Monsoon Emergency: Military Airlifts Evacuate Hundreds Along Bagmati River as Landslides Sever Mountain Highways',
+    shortSummary: 'Record monsoon cloudbursts across central Nepal have caused the Bagmati and Koshi river basins to swell past danger thresholds, triggering emergency military airlift operations, road clearance deployments, and rapid disaster relief camps across Kathmandu and surrounding valleys.',
+    categoryId: 'news',
+    categoryName: 'News & World Affairs',
+    subcategoryId: 'weather-disasters',
+    subcategoryName: 'Weather & Natural Disasters',
+    countryCode: 'NP',
+    countryName: 'Nepal',
+    region: 'Asia',
+    featuredImage: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=1400&q=80',
+    featuredImageCaption: 'Surging floodwaters crest past riverside retaining walls along the Bagmati basin following heavy Himalayan rainfall.',
+    featuredImageAlt: 'Turbulent muddy river waters rushing past embankments and mountain foothill settlements',
+    images: [
+      {
+        id: 'img-np-1',
+        url: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=1200&q=80',
+        title: 'Swollen Bagmati River Embankment',
+        alt: 'High water levels in Himalayan river valley with muddy torrents',
+        caption: 'River levels in Kathmandu Valley breached maximum historic safety markers following 48 hours of continuous rain.',
+        positionIndex: 1,
+        placementSection: 'Introduction',
+        sourceAttribution: 'WorldPlus Humanitarian Wire / Nepal NDRRMA',
+        licenseType: 'Editorial'
+      },
+      {
+        id: 'img-np-2',
+        url: 'https://images.unsplash.com/photo-1508873696983-2df57046475a?auto=format&fit=crop&w=1200&q=80',
+        title: 'Military Aviation Search & Rescue',
+        alt: 'Helicopter hovering over mountain gorge during search and rescue mission',
+        caption: 'Nepal Army aviation squadrons conducting rooftop evacuations and emergency food drops in isolated villages.',
+        positionIndex: 2,
+        placementSection: 'Latest Developments',
+        sourceAttribution: 'National Disaster Response Corps',
+        licenseType: 'Authorized Press Wire'
+      },
+      {
+        id: 'img-np-3',
+        url: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&w=1200&q=80',
+        title: 'Emergency Relief Logistics Hub',
+        alt: 'Volunteers and humanitarian workers loading emergency supplies into transport vehicles',
+        caption: 'Red Cross and local disaster relief coordination centers distributing clean drinking water, dry rations, and medical kits.',
+        positionIndex: 3,
+        placementSection: 'In-Depth Analysis',
+        sourceAttribution: 'International Federation of Red Cross & Red Crescent',
+        licenseType: 'Editorial'
+      },
+      {
+        id: 'img-np-4',
+        url: 'https://images.unsplash.com/photo-1569163139599-0f4517e36f51?auto=format&fit=crop&w=1200&q=80',
+        title: 'Swift-Water Rescue Raft Teams',
+        alt: 'Emergency rescue personnel in bright orange life jackets on inflatable boat navigating water',
+        caption: 'Armed Police Force rescue divers deployed in low-lying residential sectors to assist stranded families.',
+        positionIndex: 4,
+        placementSection: 'Global and Regional Impact',
+        sourceAttribution: 'South Asia Disaster Watch',
+        licenseType: 'Editorial'
+      },
+      {
+        id: 'img-np-5',
+        url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80',
+        title: 'Himalayan Ridge Highway Clearance',
+        alt: 'Heavy excavators clearing mud and debris from mountain highway pass',
+        caption: 'Civil engineering teams operate heavy machinery to reopen critical arterial supply corridors connecting Kathmandu to regional districts.',
+        positionIndex: 5,
+        placementSection: 'What Happens Next',
+        sourceAttribution: 'Department of Roads Nepal',
+        licenseType: 'Authorized Press Wire'
+      }
+    ],
+    sections: [
+      {
+        id: 'sec-np-1',
+        heading: 'Breaking Situation: Kathmandu Valley and River Basins Face Acute Inundation',
+        content: 'Following relentless monsoon cloudbursts that dropped over 240 millimeters of rain within a 36-hour window, widespread flooding and saturated mountain soil landslides have severed critical transportation lifelines across central Nepal. The National Disaster Risk Reduction and Management Authority (NDRRMA) confirmed that thousands of residents in riverbank lowlands have been relocated to emergency shelters established in schools and public municipal buildings.',
+        sectionType: 'intro',
+        imageUrl: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=1200&q=80',
+        imageCaption: 'Cresting waters along the Bagmati River prompt immediate municipal alerts in Kathmandu.',
+        imageAlt: 'Swollen river waters in Kathmandu valley'
+      },
+      {
+        id: 'sec-np-2',
+        heading: 'Background: The Escalating Severity of Himalayan Weather Systems',
+        content: 'The Hindu Kush Himalayan region has experienced increasingly erratic monsoon patterns over the past decade. Climate research institutes report that warming upper-troposphere air masses now hold higher moisture volumes, turning seasonal rains into concentrated cloudbursts that overwhelm natural drainage basins and terraced agricultural slopes in minutes.',
+        sectionType: 'background'
+      },
+      {
+        id: 'sec-np-3',
+        heading: 'Latest Developments: Coordinated Joint Armed Forces Search and Rescue',
+        content: 'More than 20,000 personnel from the Nepal Army, Armed Police Force, and Nepal Police have been mobilized across flood-affected zones. In Lalitpur and Bhaktapur, helicopter units performed more than 40 high-risk winch rescues to pluck residents from rooftops surrounded by deep water. Heavy excavator convoys are working continuously along the Prithvi and Tribhuvan highways to clear hundreds of debris flows and re-establish humanitarian logistics pipelines.',
+        sectionType: 'developments',
+        imageUrl: 'https://images.unsplash.com/photo-1508873696983-2df57046475a?auto=format&fit=crop&w=1200&q=80',
+        imageCaption: 'Search and rescue helicopters evacuating vulnerable families from cut-off mountain ridges.',
+        imageAlt: 'Military rescue helicopter over mountain ridge'
+      },
+      {
+        id: 'sec-np-4',
+        heading: 'In-Depth Analysis: Infrastructure Resilience and Early Warning Systems',
+        content: 'While automated river gauge sensors installed by the Department of Hydrology and Meteorology provided crucial 4-hour advance warnings that saved thousands of lives, urban encroachment onto natural river floodplains exacerbated the inundation. Urban planners emphasize that restoring natural retention ponds and reinforcing riverside embankments must become a national priority.',
+        sectionType: 'analysis',
+        imageUrl: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&w=1200&q=80',
+        imageCaption: 'Relief distribution logistics centers operating 24/7 in coordinated emergency response.',
+        imageAlt: 'Relief logistics and supplies hub'
+      },
+      {
+        id: 'sec-np-5',
+        heading: 'Regional and International Support: Neighboring Nations Mobilize Aid',
+        content: 'Emergency assistance packages, including water purification units, field medical stations, and satellite communication terminals, are being dispatched from international humanitarian agencies and neighboring governments. The United Nations disaster coordination office in Geneva has activated emergency response protocols to facilitate rapid funding releases.',
+        sectionType: 'impact',
+        imageUrl: 'https://images.unsplash.com/photo-1569163139599-0f4517e36f51?auto=format&fit=crop&w=1200&q=80',
+        imageCaption: 'Swift-water rescue teams navigating urban streets flooded by overflowing canals.',
+        imageAlt: 'Emergency rescue teams in boats'
+      },
+      {
+        id: 'sec-np-6',
+        heading: 'What Happens Next: Weather Outlook and Highway Restoration Targets',
+        content: 'Meteorological forecasts indicate a gradual tapering of rainfall intensity over the next 48 hours as the monsoon trough shifts southwards. Engineering corps estimate that primary arterial highways will achieve single-lane emergency transit within 24 hours, allowing fuel tankers and heavy relief convoys to reach mountain districts.',
+        sectionType: 'next_steps',
+        imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80',
+        imageCaption: 'Heavy excavators clearing rockfalls along mountain highway corridors.',
+        imageAlt: 'Mountain highway clearance operations'
+      },
+      {
+        id: 'sec-np-7',
+        heading: 'Editorial Assessment: Building Himalayan Climate Adaptation',
+        content: 'The resilience displayed by local communities and frontline first responders has been extraordinary. However, long-term safety in the face of intensified monsoon cycles demands permanent climate-adapted civil infrastructure, regional hydrological data sharing, and stringent watershed protection policies.',
+        sectionType: 'conclusion'
+      }
+    ],
+    faqs: [
+      {
+        question: 'Which areas in Nepal are most severely impacted by the current flooding?',
+        answer: 'The Kathmandu Valley riverbanks (Bagmati and Bishnumati), along with lowlands in Lalitpur, Kavrepalanchok, and southern Tarai districts have experienced the heaviest water levels.'
+      },
+      {
+        question: 'Are international aid agencies active on the ground?',
+        answer: 'Yes, the Nepal Red Cross Society, UN agencies, and regional disaster relief organizations are actively providing medical aid, water purification, and temporary shelter kits.'
+      },
+      {
+        question: 'When are main transit highways expected to fully reopen?',
+        answer: 'Emergency single-lane clearance for relief vehicles is underway, with full commercial transit expected to resume within 48 to 72 hours subject to weather stability.'
+      }
+    ],
+    confirmedFacts: [
+      'Over 20,000 security personnel have been mobilized in search, rescue, and relief operations.',
+      'Early automated river gauge warnings enabled timely evacuation of thousands of residents.',
+      'Emergency relief camps have been provisioned with medical supplies and water purification units.'
+    ],
+    expertAnalysis: [
+      'Himalayan cloudburst frequency has increased due to higher atmospheric moisture capacity in warming climate systems.',
+      'Urban river corridor zoning and flood retention pond restoration are essential to mitigate future valley inundations.'
+    ],
+    futureProjections: [
+      'Nepal and regional partners are expanding Doppler radar networks for real-time mountain precipitation tracking by 2027.',
+      'Multi-million dollar climate resilience funding is being earmarked for slope stabilization along major transit highways.'
+    ],
+    seo: {
+      seoTitle: 'Nepal Monsoon Floods: Military Airlifts & Emergency Rescue in Kathmandu | WorldPlus',
+      metaDescription: 'Comprehensive breaking coverage of Nepal monsoon flooding, rescue airlifts along the Bagmati basin, and highway clearance operations across Kathmandu Valley.',
+      slug: 'nepal-monsoon-floods-emergency-military-rescue-kathmandu',
+      primaryKeyword: 'Nepal Monsoon Flooding',
+      relatedKeywords: ['Nepal flood rescue', 'Kathmandu Bagmati river', 'Himalayan landslides', 'Nepal disaster relief', 'Kathmandu weather update'],
+      ogTitle: 'Nepal Monsoon Emergency: Military Airlifts Evacuate Hundreds',
+      ogDescription: 'Live reportage on the Kathmandu Valley flooding, rescue operations, and international relief deployment.',
+      ogImage: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=1400&q=80',
+      twitterCard: 'summary_large_image',
+      readingTimeMinutes: 6,
+      wordCount: 1540
+    },
+    publishedAt: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
+    status: 'published',
+    viewCount: 28450,
+    likesCount: 1420,
+    sharesCount: 780,
+    isBreaking: true,
+    isFeatured: true,
+    isTrending: true,
+    opportunityScore: 99,
+    sources: [
+      { name: 'Nepal National Disaster Risk Reduction & Management Authority', url: 'https://worldplus.world', type: 'Government Bureau' },
+      { name: 'Department of Hydrology and Meteorology Nepal', url: 'https://worldplus.world', type: 'Official Weather Service' },
+      { name: 'International Red Cross Society Dispatch', url: 'https://worldplus.world', type: 'Humanitarian Wire' }
+    ]
+  },
+  {
+    id: 'art-spt-champions-league-thriller',
+    title: '94th-Minute Stoppage Time Wonder Strike Sends 85,000 Fans Wild in Champions League Knockout Thriller',
+    shortSummary: 'In one of the most breathtaking European nights of football, a sensational 25-yard curling strike in the 94th minute sealed a dramatic 3-2 aggregate comeback victory under the floodlights, sending 85,000 fans into delirium.',
+    categoryId: 'sports',
+    categoryName: 'Sports',
+    subcategoryId: 'football',
+    subcategoryName: 'Football / Soccer',
+    countryCode: 'ES',
+    countryName: 'Spain',
+    region: 'Europe',
+    featuredImage: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1400&q=80',
+    featuredImageCaption: 'A packed stadium under illuminated floodlights erupts as the stoppage-time winning goal finds the top corner.',
+    featuredImageAlt: 'Grand football stadium floodlit at night packed with cheering spectators',
+    images: [
+      {
+        id: 'img-fb-1',
+        url: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80',
+        title: 'European Football Night Atmosphere',
+        alt: 'Massive soccer stadium packed with fans under bright night lights',
+        caption: 'Over 85,000 supporters created an electric atmosphere during the decisive quarter-final clash.',
+        positionIndex: 1,
+        placementSection: 'Introduction',
+        sourceAttribution: 'WorldPlus Sports Wire',
+        licenseType: 'Editorial'
+      },
+      {
+        id: 'img-fb-2',
+        url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80',
+        title: 'The Decisive Stoppage-Time Strike',
+        alt: 'Football player striking the ball towards goal on manicured grass pitch',
+        caption: 'The sensational 25-yard curling strike that bypassed the diving goalkeeper in the 94th minute.',
+        positionIndex: 2,
+        placementSection: 'Latest Developments',
+        sourceAttribution: 'Champions League Press Bureau',
+        licenseType: 'Authorized Press Wire'
+      },
+      {
+        id: 'img-fb-3',
+        url: 'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1200&q=80',
+        title: 'Wild Stoppage-Time Celebrations',
+        alt: 'Football team celebrating together in joyous embrace',
+        caption: 'Players and coaching staff erupt onto the pitch after the referee blew the full-time whistle.',
+        positionIndex: 3,
+        placementSection: 'In-Depth Analysis',
+        sourceAttribution: 'European Sports Photography',
+        licenseType: 'Editorial'
+      },
+      {
+        id: 'img-fb-4',
+        url: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80',
+        title: 'High-Intensity Tactical Pressing',
+        alt: 'Football athletes in high-speed sprint and tackle action',
+        caption: 'Unrelenting tactical pressing and end-to-end counterattacks characterized the high-tempo second half.',
+        positionIndex: 4,
+        placementSection: 'Global and Regional Impact',
+        sourceAttribution: 'Football Analytics Network',
+        licenseType: 'Editorial'
+      },
+      {
+        id: 'img-fb-5',
+        url: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=1200&q=80',
+        title: 'Post-Match Fan Tifo & Ovation',
+        alt: 'Stadium grandstands lit with banners and team colors',
+        caption: 'Supporters salute the players during an extended standing ovation following the dramatic victory.',
+        positionIndex: 5,
+        placementSection: 'What Happens Next',
+        sourceAttribution: 'WorldPlus Football Desk',
+        licenseType: 'Editorial'
+      }
+    ],
+    sections: [
+      {
+        id: 'sec-fb-1',
+        heading: 'A Night for Football Folklore: The 94th-Minute Turnaround',
+        content: 'When the Fourth Official signaled four minutes of added time with the tie locked at 2-2 on aggregate, extra time seemed inevitable. But in the 93rd minute and 40 seconds, a quick interchange on the edge of the penalty box opened up a split-second angle, leading to an unstoppable curling strike that rippled the top-left corner of the net.',
+        sectionType: 'intro',
+        imageUrl: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80',
+        imageCaption: 'The stadium roars as the match-winning goal seals the semi-final berth.',
+        imageAlt: 'Celebrations in football stadium'
+      },
+      {
+        id: 'sec-fb-2',
+        heading: 'Tactical Breakdown: High-Line Pressing and Midfield Dominance',
+        content: 'Trailing 1-0 at halftime, the home side transitioned from a conservative 4-3-3 into an aggressive 3-2-4-1 structure, flooding the half-spaces and forcing eight high turnovers inside the opponent defensive third. This relentless territorial pressure wore down the defending backline, creating the pockets of space needed for late-game heroics.',
+        sectionType: 'analysis'
+      },
+      {
+        id: 'sec-fb-3',
+        heading: 'Manager Reactions and Semi-Final Draw Implications',
+        content: 'In post-match press conferences, the winning manager lauded the team sheer mental fortitude: "On nights like this, tactics matter, but character and belief decide who writes history." The victory secures their place in the Champions League semi-finals, setting up a titanic clash against the defending champions next month.',
+        sectionType: 'next_steps',
+        imageUrl: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80',
+        imageCaption: 'Precision strike execution captured at point of release.',
+        imageAlt: 'Striker scoring winning goal'
+      }
+    ],
+    faqs: [
+      {
+        question: 'Who scored the winning goal in stoppage time?',
+        answer: 'The match was decided by a breathtaking 25-yard curling strike from the edge of the area in the 94th minute of play.'
+      },
+      {
+        question: 'What is the date of the upcoming semi-final match?',
+        answer: 'The UEFA Champions League semi-final first leg is scheduled to be played in three weeks, broadcast globally across major networks.'
+      }
+    ],
+    confirmedFacts: [
+      'Official stadium attendance was recorded at 85,240 spectators.',
+      'The match featured 34 total shots and 9 yellow cards in an intense European encounter.',
+      'This marks the fourth time in club history that a knockout tie was won in the 94th minute or later.'
+    ],
+    expertAnalysis: [
+      'Second-half tactical adjustments shifting to a 3-2-4-1 overloaded the defensive midfield channels effectively.',
+      'Goalkeeper positioning was flawless until the 94th minute strike struck the absolute top corner postage stamp.'
+    ],
+    futureProjections: [
+      'Television viewership for the upcoming semi-final is projected to surpass 250 million global viewers.',
+      'The winning club has ascended to number 1 in European coefficient rankings.'
+    ],
+    seo: {
+      seoTitle: 'Champions League Epic Comeback: 94th-Minute Winner Stuns 85,000 Fans | WorldPlus',
+      metaDescription: 'Full match report, tactical breakdown, and manager reactions following the breathtaking 94th-minute winner in the Champions League quarter-final.',
+      slug: 'champions-league-94th-minute-stoppage-time-winner-match-report',
+      primaryKeyword: 'Champions League Quarter Final',
+      relatedKeywords: ['Champions League winner', 'stoppage time goal', 'European football thriller', 'football match report'],
+      ogTitle: '94th-Minute Wonder Strike Crowns Champions League Thriller',
+      ogDescription: 'Read the full story of the dramatic stoppage-time turnaround that sent 85,000 fans wild.',
+      ogImage: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1400&q=80',
+      twitterCard: 'summary_large_image',
+      readingTimeMinutes: 5,
+      wordCount: 1350
+    },
+    publishedAt: new Date(Date.now() - 1000 * 60 * 25).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+    status: 'published',
+    viewCount: 31200,
+    likesCount: 2190,
+    sharesCount: 940,
+    isBreaking: true,
+    isFeatured: true,
+    isTrending: true,
+    opportunityScore: 97,
+    sources: [
+      { name: 'UEFA Official Press Dispatch', url: 'https://worldplus.world', type: 'Official Sports Federation' },
+      { name: 'European Football Statistics Bureau', url: 'https://worldplus.world', type: 'Sports Analytics' }
+    ]
+  },
+  {
+    id: 'art-news-un-climate-fund',
+    title: 'UN General Assembly Ratifies Landmark $100B Loss and Damage Climate Relief Protocol in Geneva',
+    shortSummary: 'In a momentous unanimous vote, 193 member states of the United Nations have finalized the operational framework and financial governance for the $100 Billion Loss and Damage Fund, ensuring direct grants to vulnerable nations facing extreme weather events.',
+    categoryId: 'news',
+    categoryName: 'News & World Affairs',
+    subcategoryId: 'world-news',
+    subcategoryName: 'World News & Geopolitics',
+    countryCode: 'CH',
+    countryName: 'Switzerland',
+    region: 'Europe',
+    featuredImage: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1400&q=80',
+    featuredImageCaption: 'Delegates and ambassadors convene inside the grand assembly hall at the Palais des Nations in Geneva.',
+    featuredImageAlt: 'United Nations assembly hall filled with diplomatic delegations from around the world',
+    images: [
+      {
+        id: 'img-un-1',
+        url: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1200&q=80',
+        title: 'Palais des Nations Plenary Session',
+        alt: 'Diplomatic delegates seated at rows of microphones in grand auditorium',
+        caption: 'The historic session concluding with a standing ovation as the $100B treaty gavel came down.',
+        positionIndex: 1,
+        placementSection: 'Introduction',
+        sourceAttribution: 'UN Geneva Press Office',
+        licenseType: 'Authorized Press Wire'
+      },
+      {
+        id: 'img-un-2',
+        url: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1200&q=80',
+        title: 'Diplomatic Accord Ratification',
+        alt: 'Two international delegates shaking hands over official conference documents',
+        caption: 'Key negotiators from developing island coalitions and major industrialized economies seal the pact.',
+        positionIndex: 2,
+        placementSection: 'Latest Developments',
+        sourceAttribution: 'International Diplomacy Journal',
+        licenseType: 'Editorial'
+      },
+      {
+        id: 'img-un-3',
+        url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80',
+        title: 'Global Climate Monitoring Satellite Grid',
+        alt: 'Earth viewed from space with data visualization overlays',
+        caption: 'Disbursement triggers will be tethered directly to real-time satellite disaster telemetry to eliminate bureaucratic delays.',
+        positionIndex: 3,
+        placementSection: 'In-Depth Analysis',
+        sourceAttribution: 'World Meteorological Organization',
+        licenseType: 'Editorial'
+      }
+    ],
+    sections: [
+      {
+        id: 'sec-un-1',
+        heading: 'A Watershed Diplomatic Breakthrough: Direct Grants for Climate Vulnerability',
+        content: 'Concluding five years of contentious negotiations, ambassadors and finance ministers in Geneva have formally signed the operational charter for the $100 Billion Loss and Damage Facility. Unlike previous loan-heavy climate finance mechanisms, this fund guarantees non-repayable grants distributed within 72 hours of catastrophic cyclones, floods, or prolonged droughts.',
+        sectionType: 'intro',
+        imageUrl: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1200&q=80',
+        imageCaption: 'The Geneva plenary hall voting on the final charter.',
+        imageAlt: 'UN delegates voting'
+      },
+      {
+        id: 'sec-un-2',
+        heading: 'Algorithmic Payout Triggers: Removing Bureaucratic Bottlenecks',
+        content: 'Under the newly ratified protocol, payout disbursements will be linked to parametric indices verified by the World Meteorological Organization and independent satellite radar networks. When a tropical cyclone wind speed or monsoon precipitation threshold is crossed, financial tranches are wired automatically to pre-vetted national disaster accounts.',
+        sectionType: 'analysis'
+      },
+      {
+        id: 'sec-un-3',
+        heading: 'Global Response and Initial Capital Commitments',
+        content: 'Initial commitments totaling $42 billion were pledged on the first day by the European Union, United Kingdom, Japan, and Gulf states, with the remaining tranches scheduled over the next 24 months. Representatives of the Alliance of Small Island States described the agreement as a vital lifeline for millions living on the frontlines of climate volatility.',
+        sectionType: 'impact',
+        imageUrl: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1200&q=80',
+        imageCaption: 'Delegates confirm the landmark international accord.',
+        imageAlt: 'Delegates shaking hands'
+      }
+    ],
+    faqs: [
+      {
+        question: 'How will the $100B fund be administered?',
+        answer: 'An independent international board representing equal members from developed and climate-vulnerable nations will oversee disbursements hosted by the World Bank under strict UN oversight.'
+      },
+      {
+        question: 'Are the funds loans or grants?',
+        answer: 'The charter strictly mandates that all disaster recovery and loss assistance must be provided as non-repayable direct grants, preventing additional debt burden on recipient nations.'
+      }
+    ],
+    confirmedFacts: [
+      '193 member states voted unanimously in favor of the operational charter.',
+      '$42 billion in immediate capital was committed within the opening 24 hours of ratification.',
+      'Payouts utilize satellite parametric sensors for rapid release within 72 hours of an extreme weather event.'
+    ],
+    expertAnalysis: [
+      'Transitioning to parametric grant payouts eliminates months of political negotiation during acute crises.',
+      'The fund sets a new precedent in international climate liability and multilateral accountability.'
+    ],
+    futureProjections: [
+      'The first operational grant disbursements are scheduled to commence in early 2027.',
+      'Regional satellite monitoring hubs will be established in South Asia, the Caribbean, and East Africa.'
+    ],
+    seo: {
+      seoTitle: 'UN $100B Loss and Damage Climate Relief Pact Ratified in Geneva | WorldPlus',
+      metaDescription: 'Live global report on the United Nations unanimous ratification of the $100 Billion Loss and Damage Fund for climate-vulnerable nations.',
+      slug: 'un-general-assembly-ratifies-100-billion-climate-fund-geneva',
+      primaryKeyword: 'UN Climate Loss and Damage Fund',
+      relatedKeywords: ['UN climate agreement', 'Loss and Damage fund', 'Geneva diplomatic summit', 'climate resilience grants'],
+      ogTitle: 'UN Ratifies Historic $100B Climate Relief Protocol',
+      ogDescription: '193 nations approve automatic grant disbursements for vulnerable nations facing extreme weather.',
+      ogImage: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1400&q=80',
+      twitterCard: 'summary_large_image',
+      readingTimeMinutes: 6,
+      wordCount: 1600
+    },
+    publishedAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
+    status: 'published',
+    viewCount: 19800,
+    likesCount: 1250,
+    sharesCount: 560,
+    isBreaking: false,
+    isFeatured: true,
+    isTrending: true,
+    opportunityScore: 94,
+    sources: [
+      { name: 'United Nations Information Service Geneva', url: 'https://worldplus.world', type: 'Official UN Agency' },
+      { name: 'World Meteorological Organization Reports', url: 'https://worldplus.world', type: 'Scientific Body' }
+    ]
+  },
+  {
+    id: 'art-hlth-mrna-cancer-vaccine',
+    title: 'From Lab to Clinic: Universal mRNA Personalized Cancer Vaccine Slashes Melanoma Recurrence by 78% in Phase III Global Trials',
+    shortSummary: 'In a monumental leap for oncology, clinical investigators in the UK, Germany, and the US have published peer-reviewed Phase III trial data showing personalized mRNA immunotherapy reduces cancer recurrence by 78% compared to standard surgical resection alone.',
+    categoryId: 'health',
+    categoryName: 'Health & Medical',
+    subcategoryId: 'medical-research',
+    subcategoryName: 'Medical Research & Clinical Trials',
+    countryCode: 'GB',
+    countryName: 'United Kingdom',
+    region: 'Europe',
+    featuredImage: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1400&q=80',
+    featuredImageCaption: 'Clinical oncology researchers formulate personalized mRNA antigen sequences in cleanroom laboratory suites.',
+    featuredImageAlt: 'Medical scientist in protective suit working with precision biotechnology vials',
+    images: [
+      {
+        id: 'img-hlth-1',
+        url: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80',
+        title: 'Precision Oncology Laboratory',
+        alt: 'Biotechnologist handling sterile vaccine vial in laboratory',
+        caption: 'Each patient receives a customized mRNA vaccine encoding up to 34 unique tumor neoantigens.',
+        positionIndex: 1,
+        placementSection: 'Introduction',
+        sourceAttribution: 'Imperial College London Medical Media',
+        licenseType: 'Editorial'
+      },
+      {
+        id: 'img-hlth-2',
+        url: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80',
+        title: 'High-Speed Genomic Sequencing Grid',
+        alt: 'Robotic automated DNA sequencing machines with glowing digital readouts',
+        caption: 'Tumor biopsies are sequenced in under 72 hours to design patient-specific mRNA strands.',
+        positionIndex: 2,
+        placementSection: 'Latest Developments',
+        sourceAttribution: 'European Oncology Federation',
+        licenseType: 'Authorized Press Wire'
+      },
+      {
+        id: 'img-hlth-3',
+        url: 'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=1200&q=80',
+        title: 'Digital MRI & Cellular Imaging Review',
+        alt: 'Oncologist examining digital medical scans and cellular immune responses',
+        caption: 'T-cell proliferation analysis confirms robust targeted destruction of residual microscopic cancer cells.',
+        positionIndex: 3,
+        placementSection: 'In-Depth Analysis',
+        sourceAttribution: 'British Medical Journal Wire',
+        licenseType: 'Editorial'
+      }
+    ],
+    sections: [
+      {
+        id: 'sec-hlth-1',
+        heading: 'A Historic Turning Point in Personalized Immunotherapy',
+        content: 'Decades of theoretical research into messenger RNA (mRNA) technologies have culminated in one of the most promising clinical breakthroughs in modern cancer care. In a randomized Phase III clinical trial spanning 1,100 patients across 42 cancer centers, the combination of personalized mRNA vaccine therapy and standard checkpoint inhibitors demonstrated a 78% reduction in high-risk melanoma recurrence.',
+        sectionType: 'intro',
+        imageUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80',
+        imageCaption: 'Personalized vaccine formulation undergoing quality assurance in sterile labs.',
+        imageAlt: 'Medical researcher formulating mRNA vaccine'
+      },
+      {
+        id: 'sec-hlth-2',
+        heading: 'How the Personalized Vaccine Trains T-Cells',
+        content: 'Unlike broad chemotherapy that attacks all dividing cells, the mRNA vaccine acts as a specialized training blueprint for the immune system. By sequencing a patient tumor genome against healthy DNA, algorithms identify unique neoantigens present only on cancer cells. When injected, the synthetic mRNA instructs dendritic cells to present these antigens, mobilizing cytotoxic T-cells to track down and eliminate microscopic metastasis.',
+        sectionType: 'analysis'
+      },
+      {
+        id: 'sec-hlth-3',
+        heading: 'Global Regulatory Timeline and Commercial Rollout',
+        content: 'Health regulators in the UK (MHRA), European Union (EMA), and United States (FDA) have granted breakthrough therapy designation to expedite review pathways. Production capacity is being scaled in Munich and Manchester, with commercial availability anticipated by late 2026.',
+        sectionType: 'next_steps',
+        imageUrl: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80',
+        imageCaption: 'Automated sequencing clusters accelerating custom synthesis cycles.',
+        imageAlt: 'Genomic sequencing laboratory'
+      }
+    ],
+    faqs: [
+      {
+        question: 'How long does it take to manufacture each personalized cancer vaccine?',
+        answer: 'From initial tumor biopsy sequencing to final vial formulation, current automated manufacturing takes approximately 3 to 4 weeks per patient.'
+      },
+      {
+        question: 'Can this technology be applied to other forms of cancer?',
+        answer: 'Yes, Phase II and III trials are already actively recruiting for lung, pancreatic, and colorectal cancers with preliminary results expected next year.'
+      }
+    ],
+    confirmedFacts: [
+      'Phase III trial included 1,100 patients across 42 international cancer research hospitals.',
+      'Combination therapy reduced 3-year melanoma recurrence by 78% compared to surgery alone.',
+      'No dose-limiting autoimmune toxicities were recorded during the 36-month monitoring period.'
+    ],
+    expertAnalysis: [
+      'Personalized neoantigen mapping represents the biggest leap in oncology since the introduction of immunotherapy checkpoint inhibitors.',
+      'Scaling automated mRNA synthesis will bring per-patient manufacturing costs down significantly over the next three years.'
+    ],
+    futureProjections: [
+      'Regulatory approvals across North America and Europe are expected within the next 8 to 12 months.',
+      'Clinical trials expanding into early-stage lung and pancreatic cancers are scheduled for expansion in 2027.'
+    ],
+    seo: {
+      seoTitle: 'Personalized mRNA Cancer Vaccine Slashes Recurrence by 78% | WorldPlus',
+      metaDescription: 'Landmark Phase III clinical trial results reveal personalized mRNA cancer vaccine reduces melanoma recurrence by 78%, ushering in a new era of oncology.',
+      slug: 'mrna-personalized-cancer-vaccine-phase-3-trials-78-percent-reduction',
+      primaryKeyword: 'mRNA Cancer Vaccine Breakthrough',
+      relatedKeywords: ['cancer vaccine', 'mRNA oncology', 'melanoma clinical trial', 'immunotherapy breakthrough', 'Phase 3 cancer trial'],
+      ogTitle: 'Universal Personalized mRNA Cancer Vaccine Slashes Recurrence by 78%',
+      ogDescription: 'Peer-reviewed clinical trials validate custom neoantigen vaccines as a powerful new weapon against cancer.',
+      ogImage: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1400&q=80',
+      twitterCard: 'summary_large_image',
+      readingTimeMinutes: 6,
+      wordCount: 1580
+    },
+    publishedAt: new Date(Date.now() - 1000 * 60 * 55).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+    status: 'published',
+    viewCount: 22400,
+    likesCount: 1870,
+    sharesCount: 710,
+    isBreaking: false,
+    isFeatured: true,
+    isTrending: true,
+    opportunityScore: 95,
+    sources: [
+      { name: 'British Medical & Oncology Journal', url: 'https://worldplus.world', type: 'Medical Journal' },
+      { name: 'European Society for Medical Oncology (ESMO)', url: 'https://worldplus.world', type: 'Clinical Body' }
+    ]
+  },
   {
     id: 'art-tech-frontier-ai-2026',
     title: 'Beyond Trial & Error: How Frontier AI Systems Are Autonomously Formulating Chemistry in Real Time',

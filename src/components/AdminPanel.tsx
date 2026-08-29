@@ -194,7 +194,33 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   };
 
   const [isSyncingFirebase, setIsSyncingFirebase] = useState(false);
+  const [isSyncingRss, setIsSyncingRss] = useState(false);
   const [syncStatusMsg, setSyncStatusMsg] = useState<string | null>(null);
+
+  const handleSyncRealNewsWire = async () => {
+    setIsSyncingRss(true);
+    setSyncStatusMsg('📡 Fetching real live breaking news wire from BBC World, Dawn News, and Google News RSS...');
+    try {
+      const res = await fetch('/api/rss/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ limit: 10 })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSyncStatusMsg(`✅ Successfully fetched & published ${data.syncedCount} REAL breaking news articles from BBC World, Dawn, & Google News Wire!`);
+        onRefreshData();
+        fetchAdminData();
+      } else {
+        setSyncStatusMsg('⚠️ Live RSS note: ' + (data.error || 'Failed to sync'));
+      }
+    } catch (err: any) {
+      setSyncStatusMsg('⚠️ Error syncing real news: ' + err.message);
+    } finally {
+      setIsSyncingRss(false);
+      setTimeout(() => setSyncStatusMsg(null), 6000);
+    }
+  };
 
   const handleSyncFirebaseNow = async () => {
     setIsSyncingFirebase(true);
@@ -426,6 +452,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
         <div className="flex items-center space-x-3">
           <button
+            onClick={handleSyncRealNewsWire}
+            disabled={isSyncingRss}
+            className="flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white font-mono font-bold text-xs transition-colors disabled:opacity-50 shadow-sm animate-pulse"
+            title="Fetch real breaking live wire news from BBC World, Dawn, & Google News RSS"
+          >
+            <Radio className={`w-4 h-4 ${isSyncingRss ? 'animate-spin' : ''}`} />
+            <span>{isSyncingRss ? 'Ingesting Wire...' : '📡 Sync Real Wire (BBC/Dawn)'}</span>
+          </button>
+          <button
             onClick={handleSyncFirebaseNow}
             disabled={isSyncingFirebase}
             className="flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold text-xs transition-colors disabled:opacity-50"
@@ -562,6 +597,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
               <div className="flex flex-wrap items-center gap-3">
                 <button
+                  onClick={handleSyncRealNewsWire}
+                  disabled={isSyncingRss}
+                  className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono text-xs font-bold transition-all disabled:opacity-50 shadow-md animate-pulse"
+                >
+                  <Radio className={`w-4 h-4 ${isSyncingRss ? 'animate-spin' : ''}`} />
+                  <span>{isSyncingRss ? 'Syncing Live Wire...' : '📡 Ingest Real Wire (BBC/Dawn/Reuters)'}</span>
+                </button>
+
+                <button
                   onClick={handleToggleAutomation}
                   className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all ${
                     isAutomationRunning
@@ -582,6 +626,31 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   <span>{isAllCategoriesRunning ? 'Publishing Across All Categories...' : '⚡ Blast All Categories Now'}</span>
                 </button>
               </div>
+            </div>
+
+            {/* Real Wire Sources Banner */}
+            <div className="bg-neutral-900/90 border border-neutral-800 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center font-bold">
+                  <Radio className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white flex items-center space-x-2">
+                    <span>LIVE REAL-WORLD RSS NEWS SOURCES CONNECTED</span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                  </div>
+                  <p className="text-[11px] text-neutral-400">
+                    Direct feeds from: <strong className="text-neutral-200">BBC World News</strong> (GB), <strong className="text-neutral-200">Dawn News</strong> (Pakistan), <strong className="text-neutral-200">Google News / Reuters Wire</strong>, and <strong className="text-neutral-200">Al Jazeera</strong>. Auto-ingested every 5 minutes.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={handleSyncRealNewsWire}
+                disabled={isSyncingRss}
+                className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-mono font-bold transition-colors whitespace-nowrap"
+              >
+                {isSyncingRss ? 'Connecting Feeds...' : 'Sync Feeds Now'}
+              </button>
             </div>
 
             {/* All-Categories Blast Visualizer */}

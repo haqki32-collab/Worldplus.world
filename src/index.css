@@ -3,10 +3,12 @@
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.01em;
   }
 
-  h1, h2, h3, .font-serif {
+  h1, h2, h3, h4, .font-serif {
     font-family: 'Newsreader', Georgia, Cambria, 'Times New Roman', Times, serif;
+    letter-spacing: -0.02em;
   }
 
   code, kbd, pre, .font-mono {
@@ -14,11 +16,28 @@
   }
 }
 
-/* Hide scrollbar for tabs */
+/* Editorial Drop Cap for First Paragraph in Articles */
+.drop-cap::first-letter {
+  float: left;
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 3.8rem;
+  line-height: 0.8;
+  font-weight: 700;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  color: #d97706; /* amber-600 */
+}
+
+/* Hide scrollbar for tabs while keeping smooth horizontal scroll */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Subtle newspaper column rules */
+.newspaper-border-r {
+  border-right: 1px solid rgba(156, 163, 175, 0.2);
 }

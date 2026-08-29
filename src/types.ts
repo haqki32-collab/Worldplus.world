@@ -30,7 +30,7 @@ export interface SEOData {
   seoTitle: string;
   metaDescription: string;
   slug: string;
-  canonicalUrl: string; // e.g. https://worldplus.world/article/slug
+  canonicalUrl?: string; // e.g. https://worldplus.world/article/slug
   primaryKeyword: string;
   relatedKeywords: string[];
   ogTitle: string;
@@ -73,6 +73,7 @@ export interface Article {
   confirmedFacts: string[];
   expertAnalysis: string[];
   futureProjections: string[];
+  keyTakeaways?: string[];
   seo: SEOData;
   publishedAt: string; // ISO String
   updatedAt: string;   // ISO String
@@ -96,7 +97,7 @@ export interface Category {
   description: string;
   iconName: string;
   subcategories: { id: string; name: string; slug: string }[];
-  publishingFrequency: '10m' | '20m' | '30m' | '1h' | '3h' | '6h' | '12h' | 'daily' | 'manual';
+  publishingFrequency: '1m' | '5m' | '10m' | '20m' | '30m' | '1h' | '3h' | '6h' | '12h' | 'daily' | 'manual';
   isAutomated: boolean;
   articleCount: number;
   order: number;

@@ -2,6 +2,7 @@ import { GoogleGenAI, Type } from '@google/genai';
 import { db } from './db.js';
 import { Article, ArticleImage, ArticleSection, ArticleFaq, SEOData, QualityCheckReport } from '../src/types.js';
 import { persistArticleToFirestore } from './firebaseSync.js';
+import { rssService, RawRSSItem } from './rssService.js';
 
 let aiClient: GoogleGenAI | null = null;
 let geminiRateLimitedUntil = 0;
@@ -230,13 +231,23 @@ function generateContextualImageUrl(topic: string, category: string, index: numb
 }
 
 const CURATED_IMAGE_POOLS: Record<string, string[]> = {
+  news: [
+    'https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1508873696983-2df57046475a?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1569163139599-0f4517e36f51?auto=format&fit=crop&w=1200&q=80'
+  ],
   technology: [
     'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80'
+    'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80'
   ],
   business: [
     'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
@@ -256,11 +267,11 @@ const CURATED_IMAGE_POOLS: Record<string, string[]> = {
   ],
   sports: [
     'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1531415074868-036b1c5d53ec?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80'
+    'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80'
   ],
   entertainment: [
     'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1200&q=80',
@@ -279,20 +290,20 @@ const CURATED_IMAGE_POOLS: Record<string, string[]> = {
     'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1200&q=80'
   ],
   health: [
-    'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?auto=format&fit=crop&w=1200&q=80'
   ],
   environment: [
+    'https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80'
+    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80'
   ]
 };
 
@@ -339,20 +350,63 @@ export function generateDistinctJournalisticHeadline(topic: string, categoryName
 
 export class AIService {
   public async discoverTrends(categorySlug?: string, countryCode?: string): Promise<any[]> {
+    // 1. First, fetch real live global news items from BBC World, Dawn, Google News RSS wire
+    try {
+      const realItems = await rssService.fetchAllGlobalFeeds();
+      const filtered = realItems.filter(item => {
+        if (categorySlug && categorySlug !== 'all') {
+          return item.category === categorySlug || (categorySlug === 'news' && (item.source.includes('BBC') || item.source.includes('Dawn') || item.source.includes('Google News')));
+        }
+        return true;
+      });
+
+      const pool = filtered.length > 0 ? filtered : realItems;
+      if (pool.length > 0) {
+        const top3 = pool.slice(0, 3).map((item, idx) => {
+          const isDawn = item.source.includes('Dawn') || item.title.toLowerCase().includes('pakistan');
+          const isBbc = item.source.includes('BBC');
+          const cCode = isDawn ? 'PK' : isBbc ? 'GB' : (countryCode || 'GLOBAL');
+          const cName = isDawn ? 'Pakistan' : isBbc ? 'United Kingdom' : 'Global';
+          const reg = isDawn ? 'Asia' : isBbc ? 'Europe' : 'International';
+
+          return {
+            topic: item.title,
+            countryCode: cCode,
+            countryName: cName,
+            region: reg,
+            categoryId: categorySlug || item.category || 'news',
+            categoryName: (categorySlug || item.category || 'News').toUpperCase(),
+            trendGrowth: Math.floor(Math.random() * 180) + 220,
+            searchInterest: Math.floor(Math.random() * 10) + 90,
+            opportunityScore: Math.floor(Math.random() * 8) + 92,
+            relatedKeywords: [item.source, 'Breaking News', 'Verified Facts', 'Live Coverage'],
+            sampleHeadline: item.title
+          };
+        });
+
+        return top3;
+      }
+    } catch (err) {
+      console.warn('[AI Service] RSS live trend extraction note:', err);
+    }
+
     const ai = getAiClient();
-    const prompt = `You are the WorldPlus Trend Discovery Agent. Discover 3 currently high-velocity, important trending topics in category: "${categorySlug || 'global news & tech'}" for region/country: "${countryCode || 'GLOBAL'}".
+    const prompt = `You are the WorldPlus Chief Editorial Bureau Agent modeled on BBC World, Reuters, AP, and Dawn.
+    Discover 3 currently high-velocity, real-world trending topics in category: "${categorySlug || 'news'}" for region/country: "${countryCode || 'GLOBAL'}".
+    Focus heavily on real, hard global news, geopolitical summits, economic shifts, sports milestones, and verified events with concrete facts, figures, dates, and primary source attributions.
+    
     For each trend, return JSON with:
-    - topic: concise name
-    - countryCode: 2-letter or GLOBAL
+    - topic: concise real-world topic
+    - countryCode: 2-letter country code or GLOBAL
     - countryName: string
     - region: string
     - categoryId: string
     - categoryName: string
-    - trendGrowth: number (e.g. 150 to 350)
-    - searchInterest: number (e.g. 80 to 100)
+    - trendGrowth: number (e.g. 180 to 450)
+    - searchInterest: number (e.g. 85 to 100)
     - relatedKeywords: array of 4 keywords
-    - sampleHeadline: compelling editorial headline
-    - opportunityScore: number (0-100)`;
+    - sampleHeadline: compelling, fact-based journalistic headline
+    - opportunityScore: number (88-100)`;
 
     if (ai && Date.now() > geminiRateLimitedUntil) {
       try {
@@ -398,23 +452,23 @@ export class AIService {
 
     // Fallback dynamically contextualized
     const time = Date.now();
-    const cleanCat = categorySlug || 'technology';
+    const cleanCat = categorySlug || 'news';
     const catName = cleanCat.charAt(0).toUpperCase() + cleanCat.slice(1);
     const countryN = countryCode === 'PK' ? 'Pakistan' : countryCode === 'GB' ? 'United Kingdom' : countryCode === 'IN' ? 'India' : countryCode === 'AE' ? 'United Arab Emirates' : 'United States';
     const reg = countryCode === 'PK' || countryCode === 'IN' ? 'Asia' : countryCode === 'GB' ? 'Europe' : countryCode === 'AE' ? 'Middle East' : 'North America';
 
     const sampleTopics = [
-      `Next-Generation ${catName} Transformation & Real-World Trials`,
-      `The Global Shift in ${catName}: Inside the High-Impact 2026 Milestone`,
-      `How New Breakthroughs in ${catName} Are Changing Everyday Operations`,
-      `The Multi-Billion Dollar Race for Next-Gen ${catName} Infrastructure`
+      `Diplomatic Summit Yields Comprehensive Strategic Accords Across ${catName}`,
+      `Global Trade & Economic Disclosures: Inside the Latest Sovereign Policy Shift`,
+      `Verified Milestone: New Multilateral Oversight Framework Announced for ${catName}`,
+      `International Relief & Resource Operations Mobilized for Key Regional Corridors`
     ];
     const pickedTopic = sampleTopics[Math.floor(Math.random() * sampleTopics.length)];
 
     return [
       {
         topic: pickedTopic,
-        countryCode: countryCode || 'US',
+        countryCode: countryCode || 'GLOBAL',
         countryName: countryN,
         region: reg,
         categoryId: cleanCat,
@@ -422,8 +476,8 @@ export class AIService {
         trendGrowth: Math.floor(Math.random() * 150) + 180,
         searchInterest: Math.floor(Math.random() * 15) + 85,
         opportunityScore: Math.floor(Math.random() * 10) + 88,
-        relatedKeywords: [`${cleanCat} innovations`, 'global deployment', 'verified research', 'market transformation'],
-        sampleHeadline: generateDistinctJournalisticHeadline(pickedTopic, catName, countryN, 1)
+        relatedKeywords: [`${cleanCat} updates`, 'verified disclosures', 'international wire', 'official statements'],
+        sampleHeadline: pickedTopic
       }
     ];
   }
@@ -438,39 +492,39 @@ export class AIService {
 
     if (ai && Date.now() > geminiRateLimitedUntil) {
       try {
-        const prompt = `You are the chief editorial agent for worldplus.world, a premium international media publication.
-        Generate a comprehensive, high-quality, 1,500-2,000 word editorial article on the topic: "${topic}".
+        const prompt = `You are the chief editorial bureau wire agent for worldplus.world, modeled strictly on top international journalistic standards (BBC World, Reuters, AP, Dawn, Bloomberg).
+        Generate a comprehensive, high-quality, 1,500-2,000 word investigative editorial news article on the topic: "${topic}".
         Main Category: "${category.name}".
         Country/Geographical Focus: "${country.name}".
         
         CRITICAL HEADLINE & TITLE REQUIREMENTS:
-        - The "headline" MUST be distinct, varied, captivating, and natural.
+        - The "headline" MUST be punchy, fact-grounded, compelling, and natural, exactly like a lead story on BBC News or Dawn.
         - STRICTLY FORBIDDEN: Do NOT use generic repetitive templates like "[Entity] Unveils [X]" or "[Topic]: Comprehensive Analysis and Strategic Developments".
-        - Pick one of these unique headline archetypes:
-          1. Investigative Deep Dive: "Beyond the Hype: How [Key Angle] Is Reshaping [Field]"
-          2. Question / Curiosity: "Can [Subject] Deliver on Its Promise? Inside the High-Stakes Shift"
-          3. Behind-the-Scenes: "Inside the [Milestone]: Why [Country/Region] Is Betting Everything on [Topic]"
-          4. Turning Point: "The Turning Point: How [Topic] Is Quietly Rewriting the Rules of [Category]"
-          5. Action / Impact: "From Labs to the Real World: The Rapid Rise of [Topic]"
-          6. Explanatory Hook: "The Surprising Story Behind [Topic]—And Why Experts Are Watching Closely"
+        - Pick one of these distinctive editorial headline angles:
+          1. Hard News / Wire Lead: "Key Diplomatic Accord Reached in [Region] as [Topic] Gains Multilateral Backing"
+          2. Investigative Deep Dive: "Inside [Topic]: Why [Country/Region] Is Placing a Strategic Bet on New Frameworks"
+          3. Turning Point: "The Turning Point: How [Topic] Is Reshaping [Category] Across Global Corridors"
+          4. Milestone / Real-World Impact: "From Field Trials to Nationwide Policy: The Rapid Transformation in [Topic]"
+          5. Explanatory & Analytical Hook: "The Mechanics Behind [Topic]—And What the Latest Data Disclosures Reveal"
         
-        EDITORIAL REQUIREMENTS:
+        EDITORIAL & FACTUAL INTEGRITY REQUIREMENTS:
+        - Write with high empirical precision: include real-world dates, verified numerical data, percentages, budget figures, casualty/relief stats, or official quotes from relevant regulatory bodies, ministries, or primary research institutes.
         - Domain reference: worldplus.world
         - Clear separation of Confirmed Facts, Expert Analysis, and Future Projections
-        - Professional editorial journalism tone (No fluff, no clichés, no fake human personas)
+        - Professional journalistic tone (neutral, objective, authoritative, zero synthetic fluff)
         - Sections required:
-          1. Introduction (What happened, why it matters, why it is trending)
-          2. Background (Historical context and previous limitations)
-          3. Latest Developments (Verified milestones, trials, or announcements)
-          4. In-Depth Analysis (Underlying architecture, economics, or mechanics)
-          5. Global and Regional Impact (How it affects specific markets/countries)
-          6. What Happens Next (Roadmaps, audits, or next phases)
-          7. Conclusion (Summary and strategic significance)
+          1. Introduction (The lead news peg: what happened, dateline, immediate significance)
+          2. Background (Historical context, preceding developments, and structural challenges)
+          3. Latest Developments (Newly verified facts, figures, statements, and operational milestones)
+          4. In-Depth Analysis (Underlying mechanics, financial/geopolitical dynamics, expert perspectives)
+          5. Global and Regional Impact (Cross-border implications, market or policy reactions)
+          6. What Happens Next (Official timelines, upcoming regulatory or diplomatic milestones)
+          7. Conclusion (Summary of the strategic landscape and long-term implications)
         - 3 frequently asked questions (FAQs) with detailed, factual answers
-        - 3 confirmed factual bullet points
+        - 3 confirmed factual bullet points (with exact numbers/facts)
         - 2 expert analysis bullet points
         - 2 future projection bullet points
-        - Full SEO optimization metadata`;
+        - Full SEO optimization metadata with canonical URL, primary keyword, and related keywords`;
 
         const response = await ai.models.generateContent({
           model: 'gemini-3.7-flash',
@@ -962,43 +1016,51 @@ Return pure JSON with keys: headline, shortSummary, subcategoryId, subcategoryNa
   }
 
   /**
-   * 1-Minute Multi-Category Publishing Pipeline:
-   * Discovers trends and simultaneously synthesizes and publishes 1 top-ranking,
-   * SEO-optimized article across EVERY active category.
+   * 50/50 Balanced Multi-Category Publishing Pipeline:
+   * Ensures 50% of the articles are top real-world global news (BBC/Dawn/Reuters wire)
+   * and 50% are distributed across specialized niche categories (Tech, Finance, Sports, Health, etc.).
    */
   public async runAllCategoriesPublishingCycle(): Promise<{ success: boolean; publishedCount: number; articles: Article[]; errors: string[] }> {
     const activeCategories = db.categories.filter(c => c.isAutomated !== false);
+    const nonNewsCategories = activeCategories.filter(c => c.id !== 'news');
     const publishedArticles: Article[] = [];
     const errors: string[] = [];
 
     db.addLog(
       'System',
-      'All-Category Blast Engine',
-      `Triggered 1-minute automated publishing blast across all ${activeCategories.length} categories`,
+      '50/50 Editorial Scheduler',
+      `Triggered automated publishing cycle with 50% Real-World Global News (BBC/Dawn Wire) and 50% Specialized Categories`,
       'info'
     );
 
-    // Process active categories sequentially with pacing to avoid quota spike
-    for (const category of activeCategories) {
+    // Build alternating schedule: 1 News article followed by 1 Specialized Category article
+    const schedule: string[] = [];
+    const maxItems = Math.min(nonNewsCategories.length, 12);
+    for (let i = 0; i < maxItems; i++) {
+      schedule.push('news'); // 50% Global News
+      schedule.push(nonNewsCategories[i % nonNewsCategories.length].id); // 50% Other Category
+    }
+
+    for (const catId of schedule) {
       try {
-        const result = await this.runAutomatedPublishingCycle(category.id);
+        const result = await this.runAutomatedPublishingCycle(catId);
         if (result.success && result.article) {
           publishedArticles.push(result.article);
         } else {
-          errors.push(`Failed for category: ${category.name}`);
+          errors.push(`Failed for category ID: ${catId}`);
         }
       } catch (err: any) {
-        errors.push(`Error in category ${category.name}: ${err.message}`);
+        errors.push(`Error in category ${catId}: ${err.message}`);
       }
-      // Small pause between categories
-      await new Promise(r => setTimeout(r, 200));
+      // Small pause between article generations
+      await new Promise(r => setTimeout(r, 250));
     }
 
     db.lastPublishTimestamp = Date.now();
     db.addLog(
       'System',
       'Publishing Engine',
-      `1-Minute Multi-Category cycle completed: ${publishedArticles.length} new articles published across all active categories`,
+      `Publishing cycle completed: ${publishedArticles.length} new articles published (50% Global Wire + 50% Specialized Categories)`,
       'success'
     );
 
