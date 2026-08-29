@@ -1,13 +1,14 @@
 import React from 'react';
-import { Globe, Shield, Sparkles, Rss, ArrowUp, ExternalLink, FileText, CheckCircle2, AlertCircle, Mail } from 'lucide-react';
+import { Globe, Shield, Sparkles, Rss, ArrowUp, ExternalLink, FileText, CheckCircle2, AlertCircle, Mail, HelpCircle, Info, Cookie } from 'lucide-react';
 import { Category, Country } from '../types.js';
+import { PolicyType } from './PolicyPages.js';
 
 interface FooterProps {
   categories: Category[];
   countries: Country[];
   onSelectCategory: (categorySlug: string) => void;
   onSelectCountry: (countryCode: string) => void;
-  onOpenPolicy: (policyType: 'privacy' | 'terms' | 'editorial' | 'dmca' | 'contact') => void;
+  onOpenPolicy: (policyType: PolicyType) => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
@@ -115,6 +116,24 @@ export const Footer: React.FC<FooterProps> = ({
               </li>
               <li>
                 <button
+                  onClick={() => onOpenPolicy('faqs')}
+                  className="hover:text-amber-400 transition-colors flex items-center space-x-1.5"
+                >
+                  <HelpCircle className="w-3 h-3 text-neutral-500" />
+                  <span>FAQs &amp; Help</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onOpenPolicy('about')}
+                  className="hover:text-amber-400 transition-colors flex items-center space-x-1.5"
+                >
+                  <Info className="w-3 h-3 text-neutral-500" />
+                  <span>About WorldPlus</span>
+                </button>
+              </li>
+              <li>
+                <button
                   onClick={() => onOpenPolicy('terms')}
                   className="hover:text-amber-400 transition-colors flex items-center space-x-1.5"
                 >
@@ -129,6 +148,15 @@ export const Footer: React.FC<FooterProps> = ({
                 >
                   <CheckCircle2 className="w-3 h-3 text-neutral-500" />
                   <span>Editorial Standards</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onOpenPolicy('cookies')}
+                  className="hover:text-amber-400 transition-colors flex items-center space-x-1.5"
+                >
+                  <Cookie className="w-3 h-3 text-neutral-500" />
+                  <span>Cookie Policy</span>
                 </button>
               </li>
               <li>

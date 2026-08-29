@@ -3,209 +3,443 @@ import { Article, Category, Country, TrendItem, AutomationLog, AdminStats } from
 export const INITIAL_CATEGORIES: Category[] = [
   {
     id: 'news',
-    name: 'News',
+    name: 'News & World Affairs',
     slug: 'news',
-    description: 'Breaking global headlines, geopolitical developments, international diplomacy, and investigative reporting.',
+    description: 'Breaking global headlines, geopolitics, international diplomacy, national elections, and investigative reporting.',
     iconName: 'Globe',
     subcategories: [
-      { id: 'world-news', name: 'World News', slug: 'world-news' },
+      { id: 'world-news', name: 'World News & Geopolitics', slug: 'world-news' },
       { id: 'breaking-news', name: 'Breaking News', slug: 'breaking-news' },
-      { id: 'politics', name: 'Politics', slug: 'politics' },
-      { id: 'local-news', name: 'Local News', slug: 'local-news' },
-      { id: 'international-news', name: 'International News', slug: 'international-news' }
+      { id: 'politics', name: 'National Politics & Elections', slug: 'politics' },
+      { id: 'economy-policy', name: 'Economy & Trade Policies', slug: 'economy-policy' },
+      { id: 'law-crime', name: 'Law & Crime Reporting', slug: 'law-crime' },
+      { id: 'weather-disasters', name: 'Weather & Natural Disasters', slug: 'weather-disasters' }
     ],
     publishingFrequency: '10m',
     isAutomated: true,
-    articleCount: 12,
+    articleCount: 24,
     order: 1
   },
   {
-    id: 'technology',
-    name: 'Technology',
-    slug: 'technology',
-    description: 'Next-gen computing, frontier AI breakthroughs, quantum developments, consumer hardware, and cyber intelligence.',
-    iconName: 'Cpu',
+    id: 'business-industrial',
+    name: 'Business & Industrial',
+    slug: 'business-industrial',
+    description: 'Global commerce, enterprise mergers, executive strategy, manufacturing, supply chains, and industrial innovation.',
+    iconName: 'Building2',
     subcategories: [
-      { id: 'tech-news', name: 'Technology News', slug: 'technology-news' },
-      { id: 'ai', name: 'Artificial Intelligence', slug: 'artificial-intelligence' },
-      { id: 'software', name: 'Software', slug: 'software' },
-      { id: 'mobile', name: 'Mobile', slug: 'mobile' },
-      { id: 'internet', name: 'Internet', slug: 'internet' },
-      { id: 'cybersecurity', name: 'Cybersecurity', slug: 'cybersecurity' }
+      { id: 'advertising-marketing', name: 'Advertising & Marketing', slug: 'advertising-marketing' },
+      { id: 'agriculture-forestry', name: 'Agriculture & Forestry', slug: 'agriculture-forestry' },
+      { id: 'banking-finance-ind', name: 'Commercial Banking & Finance', slug: 'banking-finance-ind' },
+      { id: 'construction-maintenance', name: 'Construction & Civil Engineering', slug: 'construction-maintenance' },
+      { id: 'energy-utilities', name: 'Energy & Utilities', slug: 'energy-utilities' },
+      { id: 'manufacturing', name: 'Manufacturing & Heavy Machinery', slug: 'manufacturing' },
+      { id: 'transportation-logistics', name: 'Transportation & Logistics', slug: 'transportation-logistics' },
+      { id: 'hospitality-industry', name: 'Hospitality & Food Service', slug: 'hospitality-industry' }
     ],
     publishingFrequency: '10m',
     isAutomated: true,
-    articleCount: 15,
+    articleCount: 18,
     order: 2
   },
   {
-    id: 'business',
-    name: 'Business',
-    slug: 'business',
-    description: 'Global commerce, enterprise mergers, executive strategy, industrial innovation, and macroeconomic trends.',
-    iconName: 'Building2',
+    id: 'technology',
+    name: 'Computers & Electronics',
+    slug: 'technology',
+    description: 'Next-gen computing, frontier AI models, consumer hardware, software ecosystems, and cyber intelligence.',
+    iconName: 'Cpu',
     subcategories: [
-      { id: 'business-news', name: 'Business News', slug: 'business-news' },
-      { id: 'companies', name: 'Companies', slug: 'companies' },
-      { id: 'startups', name: 'Startups', slug: 'startups' },
-      { id: 'economy', name: 'Economy', slug: 'economy' },
-      { id: 'markets', name: 'Markets', slug: 'markets' },
-      { id: 'entrepreneurship', name: 'Entrepreneurship', slug: 'entrepreneurship' }
+      { id: 'ai-frontier', name: 'Artificial Intelligence & Agents', slug: 'artificial-intelligence' },
+      { id: 'computer-hardware', name: 'Computer Hardware & Processors', slug: 'computer-hardware' },
+      { id: 'computer-software', name: 'Computer Software & Cloud Apps', slug: 'computer-software' },
+      { id: 'consumer-electronics', name: 'Smartphones & Consumer Electronics', slug: 'consumer-electronics' },
+      { id: 'cybersecurity', name: 'Cybersecurity & Data Privacy', slug: 'cybersecurity' },
+      { id: 'telecom-5g', name: 'Networking & 5G Telecommunications', slug: 'telecom-5g' },
+      { id: 'developer-tools', name: 'Programming & Developer Tools', slug: 'developer-tools' }
     ],
     publishingFrequency: '10m',
     isAutomated: true,
-    articleCount: 10,
+    articleCount: 22,
     order: 3
   },
   {
     id: 'finance',
-    name: 'Finance',
+    name: 'Finance & Markets',
     slug: 'finance',
-    description: 'Equities, central bank policy, sovereign debt, digital assets, cryptocurrency protocols, and personal wealth.',
+    description: 'Equities, central bank policy, cryptocurrencies, sovereign debt, digital assets, and personal wealth management.',
     iconName: 'TrendingUp',
     subcategories: [
-      { id: 'finance-main', name: 'Finance', slug: 'finance' },
-      { id: 'cryptocurrency', name: 'Cryptocurrency', slug: 'cryptocurrency' },
-      { id: 'banking', name: 'Banking', slug: 'banking' },
-      { id: 'investment', name: 'Investment', slug: 'investment' },
-      { id: 'personal-finance', name: 'Personal Finance', slug: 'personal-finance' }
+      { id: 'investing-stocks', name: 'Investing & Stock Markets', slug: 'investing-stocks' },
+      { id: 'cryptocurrency', name: 'Cryptocurrencies & Blockchain', slug: 'cryptocurrency' },
+      { id: 'banking', name: 'Banking & Mobile Wallets', slug: 'banking' },
+      { id: 'credit-lending', name: 'Credit, Lending & Mortgages', slug: 'credit-lending' },
+      { id: 'insurance', name: 'Insurance & Risk Management', slug: 'insurance' },
+      { id: 'personal-finance', name: 'Personal Finance & Wealth', slug: 'personal-finance' },
+      { id: 'accounting-tax', name: 'Accounting & Auditing', slug: 'accounting-tax' }
     ],
-    publishingFrequency: '20m',
+    publishingFrequency: '10m',
     isAutomated: true,
-    articleCount: 8,
+    articleCount: 19,
     order: 4
   },
   {
     id: 'sports',
     name: 'Sports',
     slug: 'sports',
-    description: 'Premier league football, ICC cricket championships, Grand Slam tennis, NBA basketball, and major global tournaments.',
+    description: 'ICC Cricket, Premier League Football, NBA Basketball, Formula 1, Tennis Grand Slams, and Combat Sports.',
     iconName: 'Trophy',
     subcategories: [
-      { id: 'football', name: 'Football', slug: 'football' },
-      { id: 'cricket', name: 'Cricket', slug: 'cricket' },
-      { id: 'tennis', name: 'Tennis', slug: 'tennis' },
-      { id: 'basketball', name: 'Basketball', slug: 'basketball' },
-      { id: 'other-sports', name: 'Other Sports', slug: 'other-sports' }
+      { id: 'cricket', name: 'Cricket (ICC, IPL, PSL, T20)', slug: 'cricket' },
+      { id: 'football', name: 'Football / Soccer (FIFA, UCL, EPL)', slug: 'football' },
+      { id: 'combat-sports', name: 'Combat Sports (UFC, Boxing, WWE)', slug: 'combat-sports' },
+      { id: 'motorsports', name: 'Motorsports (Formula 1, MotoGP)', slug: 'motorsports' },
+      { id: 'basketball', name: 'Basketball (NBA, EuroLeague)', slug: 'basketball' },
+      { id: 'tennis', name: 'Tennis (Wimbledon, Grand Slams)', slug: 'tennis' },
+      { id: 'athletics', name: 'Athletics & Olympics', slug: 'athletics' }
     ],
     publishingFrequency: '10m',
     isAutomated: true,
-    articleCount: 11,
+    articleCount: 20,
     order: 5
   },
   {
     id: 'entertainment',
-    name: 'Entertainment',
+    name: 'Entertainment & Arts',
     slug: 'entertainment',
-    description: 'Cinematic releases, television spectacles, music industry milestones, streaming wars, and cultural figures.',
+    description: 'Box office cinema, streaming releases, global music charts, pop culture phenomena, and celebrity spotlights.',
     iconName: 'Film',
     subcategories: [
-      { id: 'movies', name: 'Movies', slug: 'movies' },
-      { id: 'television', name: 'Television', slug: 'television' },
-      { id: 'celebrities', name: 'Celebrities', slug: 'celebrities' },
-      { id: 'music', name: 'Music', slug: 'music' },
-      { id: 'streaming', name: 'Streaming', slug: 'streaming' }
+      { id: 'movies-cinema', name: 'Movies & Cinema', slug: 'movies-cinema' },
+      { id: 'tv-streaming', name: 'Television & Streaming', slug: 'tv-streaming' },
+      { id: 'music-audio', name: 'Music & Audio Charts', slug: 'music-audio' },
+      { id: 'celebrities', name: 'Celebrities & Pop Culture', slug: 'celebrities' },
+      { id: 'visual-arts', name: 'Visual Arts & Literature', slug: 'visual-arts' }
     ],
     publishingFrequency: '10m',
     isAutomated: true,
-    articleCount: 9,
+    articleCount: 16,
     order: 6
   },
   {
+    id: 'health',
+    name: 'Health & Medical',
+    slug: 'health',
+    description: 'Medical breakthroughs, preventative cardiology, immunology, fitness training, nutrition science, and mental health.',
+    iconName: 'HeartPulse',
+    subcategories: [
+      { id: 'medical-research', name: 'Medical Research & Clinical Trials', slug: 'medical-research' },
+      { id: 'health-conditions', name: 'Health Conditions & Diseases', slug: 'health-conditions' },
+      { id: 'fitness-weight-loss', name: 'Fitness & Weight Loss', slug: 'fitness-weight-loss' },
+      { id: 'nutrition-diets', name: 'Nutrition & Diets', slug: 'nutrition-diets' },
+      { id: 'mental-health', name: 'Mental Health & Psychology', slug: 'mental-health' },
+      { id: 'pharmacy-medications', name: 'Pharmacy & Medications', slug: 'pharmacy-medications' },
+      { id: 'aging-longevity', name: 'Aging & Longevity Science', slug: 'aging-longevity' }
+    ],
+    publishingFrequency: '10m',
+    isAutomated: true,
+    articleCount: 14,
+    order: 7
+  },
+  {
     id: 'science',
-    name: 'Science',
+    name: 'Science & Space',
     slug: 'science',
-    description: 'Astrophysics, deep space exploration, biotech discoveries, quantum mechanics, and breakthrough academic research.',
+    description: 'Astrophysics, NASA & SpaceX missions, quantum physics, biological genetics, and climate geology.',
     iconName: 'Sparkles',
     subcategories: [
-      { id: 'space', name: 'Space', slug: 'space' },
-      { id: 'research', name: 'Research', slug: 'research' },
-      { id: 'innovation', name: 'Innovation', slug: 'innovation' }
+      { id: 'astronomy-space', name: 'Astronomy & Space Exploration', slug: 'astronomy-space' },
+      { id: 'physics-quantum', name: 'Physics & Quantum Energy', slug: 'physics-quantum' },
+      { id: 'biological-sciences', name: 'Biological Sciences & Genetics', slug: 'biological-sciences' },
+      { id: 'earth-sciences', name: 'Earth Sciences & Geology', slug: 'earth-sciences' },
+      { id: 'chemistry-materials', name: 'Chemistry & Nanotechnology', slug: 'chemistry-materials' }
+    ],
+    publishingFrequency: '10m',
+    isAutomated: true,
+    articleCount: 12,
+    order: 8
+  },
+  {
+    id: 'games',
+    name: 'Games & Esports',
+    slug: 'games',
+    description: 'Next-gen game launches, PlayStation & Xbox titles, PC gaming hardware, mobile titles, and international esports.',
+    iconName: 'Gamepad2',
+    subcategories: [
+      { id: 'console-games', name: 'Console Games (PS5, Xbox, Switch)', slug: 'console-games' },
+      { id: 'pc-gaming', name: 'PC Gaming & Steam', slug: 'pc-gaming' },
+      { id: 'mobile-gaming', name: 'Mobile Gaming', slug: 'mobile-gaming' },
+      { id: 'esports-tournaments', name: 'Esports & Competitive Leagues', slug: 'esports-tournaments' },
+      { id: 'game-development', name: 'Game Reviews & Walkthroughs', slug: 'game-development' }
+    ],
+    publishingFrequency: '20m',
+    isAutomated: true,
+    articleCount: 11,
+    order: 9
+  },
+  {
+    id: 'autos',
+    name: 'Autos & Vehicles',
+    slug: 'autos',
+    description: 'Electric vehicles (EVs), autonomous driving systems, luxury supercars, hybrid tech, and motorcycle engineering.',
+    iconName: 'Car',
+    subcategories: [
+      { id: 'electric-vehicles', name: 'Electric Vehicles (EVs & Charging)', slug: 'electric-vehicles' },
+      { id: 'cars-suvs', name: 'Cars, SUVs & Hybrids', slug: 'cars-suvs' },
+      { id: 'motorcycles-scooters', name: 'Motorcycles & Superbikes', slug: 'motorcycles-scooters' },
+      { id: 'commercial-vehicles', name: 'Commercial Vehicles & Trucks', slug: 'commercial-vehicles' },
+      { id: 'vehicle-maintenance', name: 'Vehicle Maintenance & Tuning', slug: 'vehicle-maintenance' }
+    ],
+    publishingFrequency: '20m',
+    isAutomated: true,
+    articleCount: 10,
+    order: 10
+  },
+  {
+    id: 'travel',
+    name: 'Travel & Tourism',
+    slug: 'travel',
+    description: 'International airline news, luxury hotel resorts, top tourist destinations, cruise lines, and visa regulations.',
+    iconName: 'Plane',
+    subcategories: [
+      { id: 'air-travel', name: 'Air Travel & Airlines', slug: 'air-travel' },
+      { id: 'hotels-accommodations', name: 'Hotels & Luxury Resorts', slug: 'hotels-accommodations' },
+      { id: 'tourist-destinations', name: 'Tourist Destinations & Guides', slug: 'tourist-destinations' },
+      { id: 'cruises-roadtrips', name: 'Cruises & Road Trips', slug: 'cruises-roadtrips' },
+      { id: 'visas-passports', name: 'Travel Visas & Immigration', slug: 'visas-passports' }
+    ],
+    publishingFrequency: '30m',
+    isAutomated: true,
+    articleCount: 8,
+    order: 11
+  },
+  {
+    id: 'shopping-ecommerce',
+    name: 'Shopping & E-Commerce',
+    slug: 'shopping-ecommerce',
+    description: 'Global retail trends, apparel & streetwear fashion, consumer electronics sales, and Black Friday/Prime deals.',
+    iconName: 'ShoppingBag',
+    subcategories: [
+      { id: 'apparel-fashion', name: 'Apparel, Footwear & Streetwear', slug: 'apparel-fashion' },
+      { id: 'consumer-deals', name: 'Electronics Deals & Black Friday', slug: 'consumer-deals' },
+      { id: 'home-appliances-shop', name: 'Home & Kitchen Appliances', slug: 'home-appliances-shop' },
+      { id: 'discounts-coupons', name: 'Coupons & Price Comparisons', slug: 'discounts-coupons' }
+    ],
+    publishingFrequency: '30m',
+    isAutomated: true,
+    articleCount: 8,
+    order: 12
+  },
+  {
+    id: 'education-jobs',
+    name: 'Education & Jobs',
+    slug: 'education-jobs',
+    description: 'Top university admissions, scholarships, online tech certifications, job market dynamics, and career growth.',
+    iconName: 'GraduationCap',
+    subcategories: [
+      { id: 'colleges-universities', name: 'Colleges & Universities', slug: 'colleges-universities' },
+      { id: 'online-learning', name: 'Online Learning & Certifications', slug: 'online-learning' },
+      { id: 'jobs-employment', name: 'Jobs & Remote Work Careers', slug: 'jobs-employment' },
+      { id: 'standardized-testing', name: 'Standardized Testing (IELTS, SAT, GRE)', slug: 'standardized-testing' }
     ],
     publishingFrequency: '30m',
     isAutomated: true,
     articleCount: 7,
-    order: 7
+    order: 13
   },
   {
-    id: 'health',
-    name: 'Health',
-    slug: 'health',
-    description: 'Preventative medicine, clinical trials, global health initiatives, immunology, and longevity science.',
-    iconName: 'HeartPulse',
+    id: 'home-garden',
+    name: 'Home & Garden',
+    slug: 'home-garden',
+    description: 'Modern interior design, architectural trends, home improvement DIY, landscaping, and domestic living.',
+    iconName: 'Home',
     subcategories: [
-      { id: 'health-news', name: 'Health News', slug: 'health-news' },
-      { id: 'wellness', name: 'Wellness', slug: 'wellness' },
-      { id: 'medical-research', name: 'Medical Research', slug: 'medical-research' }
-    ],
-    publishingFrequency: '30m',
-    isAutomated: true,
-    articleCount: 6,
-    order: 8
-  },
-  {
-    id: 'gaming',
-    name: 'Gaming',
-    slug: 'gaming',
-    description: 'Next-gen game development, esports leagues, interactive game engines, and virtual gaming worlds.',
-    iconName: 'Gamepad2',
-    subcategories: [
-      { id: 'video-games', name: 'Video Games', slug: 'video-games' },
-      { id: 'gaming-industry', name: 'Gaming Industry', slug: 'gaming-industry' },
-      { id: 'esports', name: 'Esports', slug: 'esports' }
-    ],
-    publishingFrequency: '30m',
-    isAutomated: true,
-    articleCount: 5,
-    order: 9
-  },
-  {
-    id: 'environment',
-    name: 'Environment',
-    slug: 'environment',
-    description: 'Clean energy transitions, climate resilience, biodiversity conservation, and planetary sustainability.',
-    iconName: 'Leaf',
-    subcategories: [
-      { id: 'climate', name: 'Climate', slug: 'climate' },
-      { id: 'environment-main', name: 'Environment', slug: 'environment' },
-      { id: 'sustainability', name: 'Sustainability', slug: 'sustainability' }
+      { id: 'interior-design', name: 'Interior Design & Decor', slug: 'interior-design' },
+      { id: 'home-improvement', name: 'Home Improvement & DIY', slug: 'home-improvement' },
+      { id: 'gardening-landscaping', name: 'Gardening & Landscaping', slug: 'gardening-landscaping' },
+      { id: 'domestic-pets', name: 'Domestic Pets & Pet Care', slug: 'domestic-pets' }
     ],
     publishingFrequency: '1h',
     isAutomated: true,
     articleCount: 6,
-    order: 10
+    order: 14
   },
   {
-    id: 'automotive',
-    name: 'Automotive',
-    slug: 'automotive',
-    description: 'Autonomous vehicle systems, EV battery architectures, hypercars, and global transit infrastructure.',
-    iconName: 'Car',
+    id: 'food-drink',
+    name: 'Food & Drink',
+    slug: 'food-drink',
+    description: 'Gourmet recipes, restaurant openings, Michelin guides, specialty coffee, and healthy nutrition culinary trends.',
+    iconName: 'Utensils',
     subcategories: [
-      { id: 'cars', name: 'Cars', slug: 'cars' },
-      { id: 'electric-vehicles', name: 'Electric Vehicles', slug: 'electric-vehicles' },
-      { id: 'automotive-industry', name: 'Automotive Industry', slug: 'automotive-industry' }
+      { id: 'beverages-coffee', name: 'Beverages & Specialty Coffee', slug: 'beverages-coffee' },
+      { id: 'cooking-recipes', name: 'Cooking & Traditional Recipes', slug: 'cooking-recipes' },
+      { id: 'restaurants-cafes', name: 'Restaurants & Cafe Reviews', slug: 'restaurants-cafes' },
+      { id: 'healthy-food-trends', name: 'Healthy & Plant-based Foods', slug: 'healthy-food-trends' }
+    ],
+    publishingFrequency: '1h',
+    isAutomated: true,
+    articleCount: 6,
+    order: 15
+  },
+  {
+    id: 'beauty-personal-care',
+    name: 'Beauty & Personal Care',
+    slug: 'beauty-personal-care',
+    description: 'Dermatological skincare, cosmetics, hair styling trends, luxury perfumes, and wellness grooming.',
+    iconName: 'Sparkle',
+    subcategories: [
+      { id: 'skincare-dermatology', name: 'Skincare & Dermatology', slug: 'skincare-dermatology' },
+      { id: 'hair-care', name: 'Hair Care & Styling', slug: 'hair-care' },
+      { id: 'cosmetics-makeup', name: 'Cosmetics & Makeup', slug: 'cosmetics-makeup' },
+      { id: 'perfumes-fragrances', name: 'Perfumes & Fragrances', slug: 'perfumes-fragrances' }
+    ],
+    publishingFrequency: '1h',
+    isAutomated: true,
+    articleCount: 6,
+    order: 16
+  },
+  {
+    id: 'real-estate',
+    name: 'Real Estate',
+    slug: 'real-estate',
+    description: 'Housing market forecasts, mortgage interest rates, luxury commercial properties, and residential investments.',
+    iconName: 'Landmark',
+    subcategories: [
+      { id: 'housing-market', name: 'Housing Market Trends & Prices', slug: 'housing-market' },
+      { id: 'commercial-real-estate', name: 'Commercial Real Estate & Offices', slug: 'commercial-real-estate' },
+      { id: 'luxury-properties', name: 'Luxury Villas & Apartments', slug: 'luxury-properties' },
+      { id: 'rental-markets', name: 'Rental Markets & Leasing', slug: 'rental-markets' }
+    ],
+    publishingFrequency: '1h',
+    isAutomated: true,
+    articleCount: 5,
+    order: 17
+  },
+  {
+    id: 'internet-web-services',
+    name: 'Internet & Web Services',
+    slug: 'internet-web-services',
+    description: 'Social media platforms (TikTok, X, Meta, YouTube), cloud servers, web infrastructure, and domain ecosystems.',
+    iconName: 'Share2',
+    subcategories: [
+      { id: 'social-media-platforms', name: 'Social Media Platforms & Algorithms', slug: 'social-media-platforms' },
+      { id: 'web-hosting-cloud', name: 'Web Hosting, DNS & Cloud', slug: 'web-hosting-cloud' },
+      { id: 'search-trends-seo', name: 'Search Engines & SEO Algorithms', slug: 'search-trends-seo' }
+    ],
+    publishingFrequency: '20m',
+    isAutomated: true,
+    articleCount: 7,
+    order: 18
+  },
+  {
+    id: 'environment-climate',
+    name: 'Environment & Climate',
+    slug: 'environment-climate',
+    description: 'Renewable clean tech, solar & green hydrogen transitions, global climate policy, and wildlife conservation.',
+    iconName: 'Leaf',
+    subcategories: [
+      { id: 'clean-energy-tech', name: 'Renewable Clean Tech & Solar', slug: 'clean-energy-tech' },
+      { id: 'global-warming-policy', name: 'Climate Agreements & Carbon Targets', slug: 'global-warming-policy' },
+      { id: 'wildlife-conservation', name: 'Wildlife & Ocean Conservation', slug: 'wildlife-conservation' }
+    ],
+    publishingFrequency: '30m',
+    isAutomated: true,
+    articleCount: 6,
+    order: 19
+  },
+  {
+    id: 'law-government',
+    name: 'Law & Government',
+    slug: 'law-government',
+    description: 'International legal treaties, constitutional law, defense procurement, and immigration policies.',
+    iconName: 'Scale',
+    subcategories: [
+      { id: 'immigration-citizenship', name: 'Immigration & Citizenship Laws', slug: 'immigration-citizenship' },
+      { id: 'intellectual-property', name: 'Intellectual Property & Patents', slug: 'intellectual-property' },
+      { id: 'military-defense', name: 'Military & Defense Technologies', slug: 'military-defense' }
+    ],
+    publishingFrequency: '1h',
+    isAutomated: true,
+    articleCount: 5,
+    order: 20
+  },
+  {
+    id: 'people-society',
+    name: 'People & Society',
+    slug: 'people-society',
+    description: 'Global social movements, human rights advocacy, demographic shifts, family sociology, and philosophical thought.',
+    iconName: 'Users',
+    subcategories: [
+      { id: 'social-issues', name: 'Social Issues & Human Rights', slug: 'social-issues' },
+      { id: 'family-relationships', name: 'Family & Relationships', slug: 'family-relationships' },
+      { id: 'philosophy-culture', name: 'Culture & Philosophical Ideas', slug: 'philosophy-culture' }
+    ],
+    publishingFrequency: '1h',
+    isAutomated: true,
+    articleCount: 5,
+    order: 21
+  },
+  {
+    id: 'books-literature',
+    name: 'Books & Literature',
+    slug: 'books-literature',
+    description: 'New York Times bestsellers, literary award winners, audiobook innovations, and author profiles.',
+    iconName: 'BookOpen',
+    subcategories: [
+      { id: 'fiction-bestsellers', name: 'Fiction & Non-fiction Bestsellers', slug: 'fiction-bestsellers' },
+      { id: 'audiobooks-ereaders', name: 'Audiobooks & Digital Publishing', slug: 'audiobooks-ereaders' },
+      { id: 'literary-reviews', name: 'Book Reviews & Critical Essays', slug: 'literary-reviews' }
     ],
     publishingFrequency: '1h',
     isAutomated: true,
     articleCount: 4,
-    order: 11
+    order: 22
   },
   {
-    id: 'social-media',
-    name: 'Social Media',
-    slug: 'social-media',
-    description: 'Viral dynamics, creator economy innovations, social platform algorithms, and digital cultural phenomena.',
-    iconName: 'Share2',
+    id: 'hobbies-leisure',
+    name: 'Hobbies & Leisure',
+    slug: 'hobbies-leisure',
+    description: 'Photography & drone filmmaking, luxury watch collecting, antiques, creative crafts, and outdoor recreation.',
+    iconName: 'Camera',
     subcategories: [
-      { id: 'social-platforms', name: 'Social Platforms', slug: 'social-platforms' },
-      { id: 'viral-trends', name: 'Viral Trends', slug: 'viral-trends' },
-      { id: 'digital-culture', name: 'Digital Culture', slug: 'digital-culture' }
+      { id: 'photography-videography', name: 'Photography & Drone Tech', slug: 'photography-videography' },
+      { id: 'collecting-watches', name: 'Collecting, Antiques & Horology', slug: 'collecting-watches' },
+      { id: 'crafts-model-building', name: 'Creative Crafts & DIY Projects', slug: 'crafts-model-building' }
     ],
-    publishingFrequency: '20m',
+    publishingFrequency: '1h',
     isAutomated: true,
-    articleCount: 5,
-    order: 12
+    articleCount: 4,
+    order: 23
+  },
+  {
+    id: 'pets-animals',
+    name: 'Pets & Animals',
+    slug: 'pets-animals',
+    description: 'Canine & feline veterinary health, animal behavior psychology, pet nutrition, and exotic wildlife rescues.',
+    iconName: 'PawPrint',
+    subcategories: [
+      { id: 'dog-cat-care', name: 'Dog & Cat Healthcare', slug: 'dog-cat-care' },
+      { id: 'animal-training', name: 'Pet Training & Behavior', slug: 'animal-training' },
+      { id: 'exotic-wildlife', name: 'Exotic Animals & Sanctuary News', slug: 'exotic-wildlife' }
+    ],
+    publishingFrequency: '1h',
+    isAutomated: true,
+    articleCount: 4,
+    order: 24
+  },
+  {
+    id: 'reference-general',
+    name: 'Reference & World Statistics',
+    slug: 'reference-general',
+    description: 'Global economic indicators, demographic statistics, encyclopedic facts, and public research data repositories.',
+    iconName: 'FileText',
+    subcategories: [
+      { id: 'global-statistics', name: 'Global Statistics & Indices', slug: 'global-statistics' },
+      { id: 'historical-records', name: 'Historical Archives & Public Records', slug: 'historical-records' },
+      { id: 'fact-databases', name: 'Verified Fact Repositories', slug: 'fact-databases' }
+    ],
+    publishingFrequency: '1h',
+    isAutomated: true,
+    articleCount: 4,
+    order: 25
   }
 ];
 
@@ -249,7 +483,7 @@ export const INITIAL_TRENDS: TrendItem[] = [
     relatedKeywords: ['autonomous AI agents', 'quantum inference', 'multimodal frontier models', 'AGI benchmarks'],
     discoveredAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
     status: 'published',
-    sampleHeadline: 'Frontier Reasoning Models Achieve Unprecedented Milestone in Autonomous Scientific Discovery'
+    sampleHeadline: 'Can AI Autonomously Invent? Inside the Lab That Built a Self-Correcting Discovery Engine'
   },
   {
     id: 'trend-2',
@@ -267,7 +501,7 @@ export const INITIAL_TRENDS: TrendItem[] = [
     relatedKeywords: ['Islamabad tech valley', 'solar grid expansion', 'special tech zones', 'Karachi digital hub'],
     discoveredAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
     status: 'published',
-    sampleHeadline: 'Pakistan Unveils Landmark $12B Clean Energy and High-Tech Innovation Corridor'
+    sampleHeadline: 'Powering the Next Wave: Inside Pakistan’s $12B Green Energy and Digital Corridor Accord'
   },
   {
     id: 'trend-3',
@@ -285,7 +519,7 @@ export const INITIAL_TRENDS: TrendItem[] = [
     relatedKeywords: ['cross-border liquidity', 'BIS mBridge', 'digital reserve assets', 'instant FX settlement'],
     discoveredAt: new Date(Date.now() - 1000 * 60 * 80).toISOString(),
     status: 'published',
-    sampleHeadline: 'International Central Bank Consortium Launches Interoperable Digital Currency Settlement Protocol'
+    sampleHeadline: 'The End of the 3-Day Wire: 28 Central Banks Pilot Instant Multi-Currency Settlement'
   },
   {
     id: 'trend-4',
@@ -303,7 +537,7 @@ export const INITIAL_TRENDS: TrendItem[] = [
     relatedKeywords: ['World Cup super over', 'historic finish', 'cricket rankings', 'stadium attendance record'],
     discoveredAt: new Date(Date.now() - 1000 * 60 * 25).toISOString(),
     status: 'published',
-    sampleHeadline: 'Historic Super-Over Showdown Caps World Championship in Front of 110,000 Electric Fans'
+    sampleHeadline: 'Down to the Millimeter: Double Super-Over Climax Crowns World Champions Before 112,000 Fans'
   },
   {
     id: 'trend-5',
@@ -321,14 +555,14 @@ export const INITIAL_TRENDS: TrendItem[] = [
     relatedKeywords: ['exoplanet atmosphere', 'K2-18b spectroscopic analysis', 'habitable zone discovery', 'NASA astrophysics'],
     discoveredAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
     status: 'published',
-    sampleHeadline: 'Deep Space Observatory Confirms Compelling Molecular Signatures in Habitable-Zone Exoplanet'
+    sampleHeadline: 'Signs of an Ocean World: What Webb’s Latest Spectrum from Planet K2-18b Actually Reveals'
   }
 ];
 
 export const INITIAL_ARTICLES: Article[] = [
   {
     id: 'art-tech-frontier-ai-2026',
-    title: 'Frontier Reasoning Models Achieve Unprecedented Breakthrough in Autonomous Scientific Research',
+    title: 'Beyond Trial & Error: How Frontier AI Systems Are Autonomously Formulating Chemistry in Real Time',
     shortSummary: 'A synchronized international laboratory consortium has announced a major leap in autonomous AI systems capable of formulating novel biochemical hypotheses, designing synthetic trials, and verifying physical outcomes in real-time.',
     categoryId: 'technology',
     categoryName: 'Technology',
@@ -515,7 +749,7 @@ export const INITIAL_ARTICLES: Article[] = [
   },
   {
     id: 'art-pk-tech-corridor-2026',
-    title: 'Pakistan Unveils $12B Clean Energy and High-Tech Corridor to Accelerate Regional Digital Economy',
+    title: 'Powering the Next Wave: Inside Pakistan’s $12B Green Energy and Digital Corridor Accord',
     shortSummary: 'In a landmark national modernization initiative, Pakistan has formally ratified the National Clean Energy & Tech Corridor Accord, establishing tax-exempt digital zones, 10-gigawatt solar-hydro grids, and high-speed fiber backbones connecting major economic centers.',
     categoryId: 'business',
     categoryName: 'Business',
@@ -682,7 +916,7 @@ export const INITIAL_ARTICLES: Article[] = [
   },
   {
     id: 'art-fin-central-bank-settlement',
-    title: 'Global Central Bank Consortium Unveils Interoperable Digital Currency Settlement Protocol',
+    title: 'The End of the 3-Day Wire: 28 Central Banks Pilot Instant Multi-Currency Settlement',
     shortSummary: 'Financial authorities across 28 sovereign central banks have completed operational trials for a real-time cross-border liquidity and settlement engine designed to eliminate multi-day correspondent banking delays.',
     categoryId: 'finance',
     categoryName: 'Finance',
@@ -818,13 +1052,13 @@ export const INITIAL_ARTICLES: Article[] = [
       'Global corporate treasury operations could free up over $300 billion in idle overnight liquidity buffers.'
     ],
     seo: {
-      seoTitle: 'Central Banks Unveil Instant Multi-Currency Settlement Network | WorldPlus',
+      seoTitle: 'The End of the 3-Day Wire: 28 Central Banks Pilot Instant Settlement | WorldPlus',
       metaDescription: '28 sovereign central banks successfully deploy instant atomic cross-border settlement protocol, slashing payment friction and liquidity risk.',
-      slug: 'central-banks-interoperable-digital-currency-settlement-protocol',
-      canonicalUrl: 'https://worldplus.world/article/central-banks-interoperable-digital-currency-settlement-protocol',
+      slug: 'the-end-of-the-3-day-wire-central-banks-instant-settlement',
+      canonicalUrl: 'https://worldplus.world/article/the-end-of-the-3-day-wire-central-banks-instant-settlement',
       primaryKeyword: 'Digital Central Bank Settlement',
       relatedKeywords: ['wholesale CBDC', 'Project Meridian', 'cross border payments', 'atomic settlement', 'forex liquidity'],
-      ogTitle: 'Global Central Banks Launch Instant Digital Currency Settlement',
+      ogTitle: 'The End of the 3-Day Wire: Instant Multi-Currency Settlement',
       ogDescription: 'New atomic settlement protocol slashes cross-border payment times from days to seconds across 28 monetary jurisdictions.',
       ogImage: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1400&q=80',
       twitterCard: 'summary_large_image',
@@ -848,7 +1082,7 @@ export const INITIAL_ARTICLES: Article[] = [
   },
   {
     id: 'art-sci-jwst-exoplanet-biomarker',
-    title: 'Deep Space Observatory Confirms Compelling Molecular Signatures in Habitable-Zone Exoplanet',
+    title: 'Signs of an Ocean World: What Webb’s Latest Spectrum from Planet K2-18b Actually Reveals',
     shortSummary: 'Spectroscopic instruments on board the James Webb Space Telescope have detected unprecedented concentrations of carbon-bearing molecules and dimethyl sulfide indicators in the atmosphere of sub-Neptune exoplanet K2-18b.',
     categoryId: 'science',
     categoryName: 'Science',
@@ -984,13 +1218,13 @@ export const INITIAL_ARTICLES: Article[] = [
       'MIRI follow-up observations scheduled for late 2026 will achieve the required signal-to-noise ratio to verify the sulfur signature.'
     ],
     seo: {
-      seoTitle: 'JWST Confirms Molecular Signatures on Habitable Exoplanet K2-18b | WorldPlus',
+      seoTitle: 'Signs of an Ocean World: Webb Detects Molecular Markers on Planet K2-18b | WorldPlus',
       metaDescription: 'James Webb Space Telescope detects carbon abundance and potential organic biomarker indicators on habitable-zone exoplanet K2-18b.',
-      slug: 'jwst-confirms-molecular-biomarker-signatures-exoplanet-k218b',
-      canonicalUrl: 'https://worldplus.world/article/jwst-confirms-molecular-biomarker-signatures-exoplanet-k218b',
+      slug: 'signs-of-an-ocean-world-webb-exoplanet-k218b',
+      canonicalUrl: 'https://worldplus.world/article/signs-of-an-ocean-world-webb-exoplanet-k218b',
       primaryKeyword: 'Exoplanet K2-18b Discovery',
       relatedKeywords: ['JWST astrophysics', 'habitable zone planet', 'dimethyl sulfide biomarker', 'NASA space telescope', 'Hycean ocean world'],
-      ogTitle: 'James Webb Space Telescope Discovers Potential Biomarkers on Exoplanet',
+      ogTitle: 'Signs of an Ocean World: Potential Biomarkers on Exoplanet K2-18b',
       ogDescription: 'Spectroscopic data reveals methane abundance and tentative dimethyl sulfide signatures on sub-Neptune exoplanet K2-18b.',
       ogImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1400&q=80',
       twitterCard: 'summary_large_image',
@@ -1015,7 +1249,7 @@ export const INITIAL_ARTICLES: Article[] = [
   },
   {
     id: 'art-spt-cricket-super-over-thriller',
-    title: 'Historic Super-Over Showdown Caps World Championship in Front of 110,000 Electric Fans',
+    title: 'Down to the Millimeter: Double Super-Over Climax Crowns World Champions Before 112,000 Fans',
     shortSummary: 'In one of the most riveting finishes in sporting history, the ICC World Championship final was decided by a dramatic second super-over tiebreaker as unmatched fielding and death-bowling held the line in the final ball.',
     categoryId: 'sports',
     categoryName: 'Sports',
@@ -1139,13 +1373,13 @@ export const INITIAL_ARTICLES: Article[] = [
       'Global advertising revenue for the subsequent championship cycle is forecasted to rise by 35%.'
     ],
     seo: {
-      seoTitle: 'Historic Super-Over Showdown Decides World Cricket Championship | WorldPlus',
+      seoTitle: 'Down to the Millimeter: Double Super-Over Decides World Final | WorldPlus',
       metaDescription: 'Full coverage of the dramatic ICC World Championship final super-over finish in front of 110,000 electric fans.',
-      slug: 'historic-super-over-showdown-caps-world-cricket-championship',
-      canonicalUrl: 'https://worldplus.world/article/historic-super-over-showdown-caps-world-cricket-championship',
+      slug: 'down-to-the-millimeter-double-super-over-world-championship',
+      canonicalUrl: 'https://worldplus.world/article/down-to-the-millimeter-double-super-over-world-championship',
       primaryKeyword: 'World Cricket Championship Super Over',
       relatedKeywords: ['ICC final 2026', 'super over thriller', 'cricket world cup', 'world championship record crowd'],
-      ogTitle: 'Historic Super-Over Showdown Caps World Championship',
+      ogTitle: 'Down to the Millimeter: Double Super-Over Showdown',
       ogDescription: 'A pulsating double super-over thriller crowns the new champions in front of 112,000 stadium spectators.',
       ogImage: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=1400&q=80',
       twitterCard: 'summary_large_image',
@@ -1169,7 +1403,7 @@ export const INITIAL_ARTICLES: Article[] = [
   },
   {
     id: 'art-ent-hollywood-virtual-production',
-    title: 'Virtual Production Stages and Neural Generative VFX Transform Global Cinema Economics',
+    title: 'Farewell to Green Screens: How Giant LED Volumes Are Slashing Movie Budgets by 40%',
     shortSummary: 'Major motion picture studios in London, Los Angeles, and Mumbai are adopting real-time photorealistic LED volumes and AI-assisted physical lighting systems, reducing principal photography budgets by 40% while expanding creative scope.',
     categoryId: 'entertainment',
     categoryName: 'Entertainment',

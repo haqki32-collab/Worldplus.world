@@ -1,4 +1,5 @@
 import { Article, Category, Country, TrendItem, AutomationJob, AutomationLog, AdminStats } from '../src/types.js';
+import { INITIAL_CATEGORIES } from '../src/data/initialData.js';
 
 export class WorldPlusDatabase {
   public articles: Article[] = [];
@@ -20,214 +21,7 @@ export class WorldPlusDatabase {
   }
 
   private seedCategories() {
-    this.categories = [
-      {
-        id: 'news',
-        name: 'News',
-        slug: 'news',
-        description: 'Breaking global headlines, geopolitical developments, international diplomacy, and investigative reporting.',
-        iconName: 'Globe',
-        subcategories: [
-          { id: 'world-news', name: 'World News', slug: 'world-news' },
-          { id: 'breaking-news', name: 'Breaking News', slug: 'breaking-news' },
-          { id: 'politics', name: 'Politics', slug: 'politics' },
-          { id: 'local-news', name: 'Local News', slug: 'local-news' },
-          { id: 'international-news', name: 'International News', slug: 'international-news' }
-        ],
-        publishingFrequency: '10m',
-        isAutomated: true,
-        articleCount: 12,
-        order: 1
-      },
-      {
-        id: 'technology',
-        name: 'Technology',
-        slug: 'technology',
-        description: 'Next-gen computing, frontier AI breakthroughs, quantum developments, consumer hardware, and cyber intelligence.',
-        iconName: 'Cpu',
-        subcategories: [
-          { id: 'tech-news', name: 'Technology News', slug: 'technology-news' },
-          { id: 'ai', name: 'Artificial Intelligence', slug: 'artificial-intelligence' },
-          { id: 'software', name: 'Software', slug: 'software' },
-          { id: 'mobile', name: 'Mobile', slug: 'mobile' },
-          { id: 'internet', name: 'Internet', slug: 'internet' },
-          { id: 'cybersecurity', name: 'Cybersecurity', slug: 'cybersecurity' }
-        ],
-        publishingFrequency: '10m',
-        isAutomated: true,
-        articleCount: 15,
-        order: 2
-      },
-      {
-        id: 'business',
-        name: 'Business',
-        slug: 'business',
-        description: 'Global commerce, enterprise mergers, executive strategy, industrial innovation, and macroeconomic trends.',
-        iconName: 'Building2',
-        subcategories: [
-          { id: 'business-news', name: 'Business News', slug: 'business-news' },
-          { id: 'companies', name: 'Companies', slug: 'companies' },
-          { id: 'startups', name: 'Startups', slug: 'startups' },
-          { id: 'economy', name: 'Economy', slug: 'economy' },
-          { id: 'markets', name: 'Markets', slug: 'markets' },
-          { id: 'entrepreneurship', name: 'Entrepreneurship', slug: 'entrepreneurship' }
-        ],
-        publishingFrequency: '10m',
-        isAutomated: true,
-        articleCount: 10,
-        order: 3
-      },
-      {
-        id: 'finance',
-        name: 'Finance',
-        slug: 'finance',
-        description: 'Equities, central bank policy, sovereign debt, digital assets, cryptocurrency protocols, and personal wealth.',
-        iconName: 'TrendingUp',
-        subcategories: [
-          { id: 'finance-main', name: 'Finance', slug: 'finance' },
-          { id: 'cryptocurrency', name: 'Cryptocurrency', slug: 'cryptocurrency' },
-          { id: 'banking', name: 'Banking', slug: 'banking' },
-          { id: 'investment', name: 'Investment', slug: 'investment' },
-          { id: 'personal-finance', name: 'Personal Finance', slug: 'personal-finance' }
-        ],
-        publishingFrequency: '20m',
-        isAutomated: true,
-        articleCount: 8,
-        order: 4
-      },
-      {
-        id: 'sports',
-        name: 'Sports',
-        slug: 'sports',
-        description: 'Premier league football, ICC cricket championships, Grand Slam tennis, NBA basketball, and major global tournaments.',
-        iconName: 'Trophy',
-        subcategories: [
-          { id: 'football', name: 'Football', slug: 'football' },
-          { id: 'cricket', name: 'Cricket', slug: 'cricket' },
-          { id: 'tennis', name: 'Tennis', slug: 'tennis' },
-          { id: 'basketball', name: 'Basketball', slug: 'basketball' },
-          { id: 'other-sports', name: 'Other Sports', slug: 'other-sports' }
-        ],
-        publishingFrequency: '10m',
-        isAutomated: true,
-        articleCount: 11,
-        order: 5
-      },
-      {
-        id: 'entertainment',
-        name: 'Entertainment',
-        slug: 'entertainment',
-        description: 'Cinematic releases, television spectacles, music industry milestones, streaming wars, and cultural figures.',
-        iconName: 'Film',
-        subcategories: [
-          { id: 'movies', name: 'Movies', slug: 'movies' },
-          { id: 'television', name: 'Television', slug: 'television' },
-          { id: 'celebrities', name: 'Celebrities', slug: 'celebrities' },
-          { id: 'music', name: 'Music', slug: 'music' },
-          { id: 'streaming', name: 'Streaming', slug: 'streaming' }
-        ],
-        publishingFrequency: '10m',
-        isAutomated: true,
-        articleCount: 9,
-        order: 6
-      },
-      {
-        id: 'science',
-        name: 'Science',
-        slug: 'science',
-        description: 'Astrophysics, deep space exploration, biotech discoveries, quantum mechanics, and breakthrough academic research.',
-        iconName: 'Sparkles',
-        subcategories: [
-          { id: 'space', name: 'Space', slug: 'space' },
-          { id: 'research', name: 'Research', slug: 'research' },
-          { id: 'innovation', name: 'Innovation', slug: 'innovation' }
-        ],
-        publishingFrequency: '30m',
-        isAutomated: true,
-        articleCount: 7,
-        order: 7
-      },
-      {
-        id: 'health',
-        name: 'Health',
-        slug: 'health',
-        description: 'Preventative medicine, clinical trials, global health initiatives, immunology, and longevity science.',
-        iconName: 'HeartPulse',
-        subcategories: [
-          { id: 'health-news', name: 'Health News', slug: 'health-news' },
-          { id: 'wellness', name: 'Wellness', slug: 'wellness' },
-          { id: 'medical-research', name: 'Medical Research', slug: 'medical-research' }
-        ],
-        publishingFrequency: '30m',
-        isAutomated: true,
-        articleCount: 6,
-        order: 8
-      },
-      {
-        id: 'gaming',
-        name: 'Gaming',
-        slug: 'gaming',
-        description: 'Next-gen game development, esports leagues, interactive game engines, and virtual gaming worlds.',
-        iconName: 'Gamepad2',
-        subcategories: [
-          { id: 'video-games', name: 'Video Games', slug: 'video-games' },
-          { id: 'gaming-industry', name: 'Gaming Industry', slug: 'gaming-industry' },
-          { id: 'esports', name: 'Esports', slug: 'esports' }
-        ],
-        publishingFrequency: '30m',
-        isAutomated: true,
-        articleCount: 5,
-        order: 9
-      },
-      {
-        id: 'environment',
-        name: 'Environment',
-        slug: 'environment',
-        description: 'Clean energy transitions, climate resilience, biodiversity conservation, and planetary sustainability.',
-        iconName: 'Leaf',
-        subcategories: [
-          { id: 'climate', name: 'Climate', slug: 'climate' },
-          { id: 'environment-main', name: 'Environment', slug: 'environment' },
-          { id: 'sustainability', name: 'Sustainability', slug: 'sustainability' }
-        ],
-        publishingFrequency: '1h',
-        isAutomated: true,
-        articleCount: 6,
-        order: 10
-      },
-      {
-        id: 'automotive',
-        name: 'Automotive',
-        slug: 'automotive',
-        description: 'Autonomous vehicle systems, EV battery architectures, hypercars, and global transit infrastructure.',
-        iconName: 'Car',
-        subcategories: [
-          { id: 'cars', name: 'Cars', slug: 'cars' },
-          { id: 'electric-vehicles', name: 'Electric Vehicles', slug: 'electric-vehicles' },
-          { id: 'automotive-industry', name: 'Automotive Industry', slug: 'automotive-industry' }
-        ],
-        publishingFrequency: '1h',
-        isAutomated: true,
-        articleCount: 4,
-        order: 11
-      },
-      {
-        id: 'social-media',
-        name: 'Social Media',
-        slug: 'social-media',
-        description: 'Viral dynamics, creator economy innovations, social platform algorithms, and digital cultural phenomena.',
-        iconName: 'Share2',
-        subcategories: [
-          { id: 'social-platforms', name: 'Social Platforms', slug: 'social-platforms' },
-          { id: 'viral-trends', name: 'Viral Trends', slug: 'viral-trends' },
-          { id: 'digital-culture', name: 'Digital Culture', slug: 'digital-culture' }
-        ],
-        publishingFrequency: '20m',
-        isAutomated: true,
-        articleCount: 5,
-        order: 12
-      }
-    ];
+    this.categories = JSON.parse(JSON.stringify(INITIAL_CATEGORIES));
   }
 
   private seedCountries() {
@@ -274,7 +68,7 @@ export class WorldPlusDatabase {
         relatedKeywords: ['autonomous AI agents', 'quantum inference', 'multimodal frontier models', 'AGI benchmarks'],
         discoveredAt: new Date(now - 1000 * 60 * 15).toISOString(),
         status: 'published',
-        sampleHeadline: 'Frontier Reasoning Models Achieve Unprecedented Milestone in Autonomous Scientific Discovery'
+        sampleHeadline: 'Frontier Reasoning in AI: Inside the Breakthrough Redefining Autonomous Science'
       },
       {
         id: 'trend-2',
@@ -292,7 +86,7 @@ export class WorldPlusDatabase {
         relatedKeywords: ['Islamabad tech valley', 'solar grid expansion', 'special tech zones', 'Karachi digital hub'],
         discoveredAt: new Date(now - 1000 * 60 * 45).toISOString(),
         status: 'published',
-        sampleHeadline: 'Pakistan Unveils Landmark $12B Clean Energy and High-Tech Innovation Corridor'
+        sampleHeadline: 'Pakistan’s $12B Clean Energy Bet: Can High-Tech Corridors Transform South Asia’s Digital Economy?'
       },
       {
         id: 'trend-3',
@@ -310,7 +104,7 @@ export class WorldPlusDatabase {
         relatedKeywords: ['cross-border liquidity', 'BIS mBridge', 'digital reserve assets', 'instant FX settlement'],
         discoveredAt: new Date(now - 1000 * 60 * 80).toISOString(),
         status: 'published',
-        sampleHeadline: 'International Central Bank Consortium Launches Interoperable Digital Currency Settlement Protocol'
+        sampleHeadline: 'Instant Global Settlement: How 28 Central Banks Just Tested the Future of Money'
       },
       {
         id: 'trend-4',
@@ -328,7 +122,7 @@ export class WorldPlusDatabase {
         relatedKeywords: ['World Cup super over', 'historic finish', 'cricket rankings', 'stadium attendance record'],
         discoveredAt: new Date(now - 1000 * 60 * 25).toISOString(),
         status: 'published',
-        sampleHeadline: 'Historic Super-Over Showdown Caps World Championship in Front of 110,000 Electric Fans'
+        sampleHeadline: 'One Ball, Two Super-Overs: Inside the Most Dramatic World Championship Finale in Cricket History'
       },
       {
         id: 'trend-5',
@@ -346,7 +140,7 @@ export class WorldPlusDatabase {
         relatedKeywords: ['exoplanet atmosphere', 'K2-18b spectroscopic analysis', 'habitable zone discovery', 'NASA astrophysics'],
         discoveredAt: new Date(now - 1000 * 60 * 120).toISOString(),
         status: 'published',
-        sampleHeadline: 'Deep Space Observatory Confirms Compelling Molecular Signatures in Habitable-Zone Exoplanet'
+        sampleHeadline: 'Signs of an Ocean World? James Webb Detects Carbon-Rich Biomarker Clues on Exoplanet K2-18b'
       },
       {
         id: 'trend-6',
@@ -364,7 +158,7 @@ export class WorldPlusDatabase {
         relatedKeywords: ['flying taxi infrastructure', 'smart city Dubai', 'Gulf tech sovereign fund', 'autonomous transit'],
         discoveredAt: new Date(now - 1000 * 60 * 140).toISOString(),
         status: 'published',
-        sampleHeadline: 'UAE Inception of World First Commercial Autonomous Sky-Transit Grid Begins Commercial Operations'
+        sampleHeadline: 'Flying Taxis to Desert Hyperloops: What Dubai’s AI Summit Reveals About Future Transit'
       },
       {
         id: 'trend-7',
@@ -382,7 +176,7 @@ export class WorldPlusDatabase {
         relatedKeywords: ['solid state electrolyte', 'ultra fast EV charging', 'Tokyo mobility showcase', 'zero degradation cell'],
         discoveredAt: new Date(now - 1000 * 60 * 180).toISOString(),
         status: 'published',
-        sampleHeadline: 'Breakthrough Ceramic Electrolyte Powers 1,200km EV Range with 8-Minute Fast Charge'
+        sampleHeadline: '1,200km on an 8-Minute Charge: Inside Japan’s Solid-State EV Revolution'
       },
       {
         id: 'trend-8',
@@ -400,7 +194,7 @@ export class WorldPlusDatabase {
         relatedKeywords: ['personalized oncology', 'mRNA antigen mapping', 'NHS clinical trial', 'immunotherapy milestone'],
         discoveredAt: new Date(now - 1000 * 60 * 60).toISOString(),
         status: 'published',
-        sampleHeadline: 'Landmark Multi-Center Trial Begins for Personalized Immunotherapy Targeting Aggressive Cancers'
+        sampleHeadline: 'From Lab to Clinic: The Universal Cancer Vaccine Milestone Entering Phase III Trials'
       }
     ];
   }
@@ -410,7 +204,7 @@ export class WorldPlusDatabase {
     this.articles = [
       {
         id: 'art-tech-frontier-ai-2026',
-        title: 'Frontier Reasoning Models Achieve Unprecedented Breakthrough in Autonomous Scientific Research',
+        title: 'Beyond Trial & Error: How Frontier AI Systems Are Autonomously Formulating Chemistry in Real Time',
         shortSummary: 'A synchronized international laboratory consortium has announced a major leap in autonomous AI systems capable of formulating novel biochemical hypotheses, designing synthetic trials, and verifying physical outcomes in real-time.',
         categoryId: 'technology',
         categoryName: 'Technology',
@@ -612,7 +406,7 @@ export class WorldPlusDatabase {
       },
       {
         id: 'art-pk-tech-corridor-2026',
-        title: 'Pakistan Unveils $12B Clean Energy and High-Tech Corridor to Accelerate Regional Digital Economy',
+        title: 'Pakistan’s $12B Clean Energy Bet: Can High-Tech Corridors Transform South Asia’s Digital Economy?',
         shortSummary: 'In a landmark national modernization initiative, Pakistan has formally ratified the National Clean Energy & Tech Corridor Accord, establishing tax-exempt digital zones, 10-gigawatt solar-hydro grids, and high-speed fiber backbones connecting major economic centers.',
         categoryId: 'business',
         categoryName: 'Business',
@@ -779,7 +573,7 @@ export class WorldPlusDatabase {
       },
       {
         id: 'art-fin-central-bank-settlement',
-        title: 'Global Central Bank Consortium Unveils Interoperable Digital Currency Settlement Protocol',
+        title: 'Instant Global Settlement: How 28 Central Banks Just Tested the Future of Money',
         shortSummary: 'Financial authorities across 28 sovereign central banks have completed operational trials for a real-time cross-border liquidity and settlement engine designed to eliminate multi-day correspondent banking delays.',
         categoryId: 'finance',
         categoryName: 'Finance',
@@ -945,7 +739,7 @@ export class WorldPlusDatabase {
       },
       {
         id: 'art-sci-jwst-exoplanet-biomarker',
-        title: 'Deep Space Observatory Confirms Compelling Molecular Signatures in Habitable-Zone Exoplanet',
+        title: 'Signs of an Ocean World? James Webb Detects Carbon-Rich Biomarker Clues on Exoplanet K2-18b',
         shortSummary: 'Spectroscopic instruments on board the James Webb Space Telescope have detected unprecedented concentrations of carbon-bearing molecules and dimethyl sulfide indicators in the atmosphere of sub-Neptune exoplanet K2-18b.',
         categoryId: 'science',
         categoryName: 'Science',
@@ -1112,7 +906,7 @@ export class WorldPlusDatabase {
       },
       {
         id: 'art-spt-cricket-super-over-thriller',
-        title: 'Historic Super-Over Showdown Caps World Championship in Front of 110,000 Electric Fans',
+        title: 'One Ball, Two Super-Overs: Inside the Most Dramatic World Championship Finale in Cricket History',
         shortSummary: 'In one of the most riveting finishes in sporting history, the ICC World Championship final was decided by a dramatic second super-over tiebreaker as unmatched fielding and death-bowling held the line in the final ball.',
         categoryId: 'sports',
         categoryName: 'Sports',
@@ -1266,7 +1060,7 @@ export class WorldPlusDatabase {
       },
       {
         id: 'art-ent-hollywood-virtual-production',
-        title: 'Virtual Production Stages and Neural Generative VFX Transform Global Cinema Economics',
+        title: 'Farewell Green Screens: How Virtual LED Stages Are Quietly Rewriting Hollywood’s Rulebook',
         shortSummary: 'Major motion picture studios in London, Los Angeles, and Mumbai are adopting real-time photorealistic LED volumes and AI-assisted physical lighting systems, reducing principal photography budgets by 40% while expanding creative scope.',
         categoryId: 'entertainment',
         categoryName: 'Entertainment',

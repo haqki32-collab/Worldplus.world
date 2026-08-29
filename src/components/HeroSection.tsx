@@ -1,5 +1,5 @@
-import React from 'react';
-import { Sparkles, Clock, Globe, Flame, ArrowUpRight, ShieldCheck, BookOpen } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Sparkles, Clock, Globe, Flame, ArrowUpRight, ShieldCheck, Zap, RefreshCw } from 'lucide-react';
 import { Article } from '../types.js';
 
 interface HeroSectionProps {
@@ -8,17 +8,65 @@ interface HeroSectionProps {
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onSelectArticle }) => {
+  const [now, setNow] = useState(Date.now());
+
+  // Update time every 30 seconds for live 1-hour window calculation
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 30000);
+    return () => clearInterval(timer);
+  }, []);
+
   if (articles.length === 0) return null;
 
-  const mainStory = articles.find(a => a.isFeatured) || articles[0];
+  const ONE_HOUR_MS = 60 * 60 * 1000;
+
+  // 1. Check for fresh articles published within the last 1 hour (60 minutes)
+  const freshArticles = articles
+    .filter(a => {
+      const publishedTime = new Date(a.publishedAt).getTime();
+      const age = now - publishedTime;
+      return age >= 0 && age < ONE_HOUR_MS;
+    })
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+  const hasFreshStoryUnder1Hour = freshArticles.length > 0;
+
+  // 2. If fresh story exists (< 1 hr), select newest fresh story as lead.
+  // Otherwise, select from trending articles using an hourly rotating index.
+  let mainStory: Article;
+  let isFreshLead = false;
+
+  if (hasFreshStoryUnder1Hour) {
+    mainStory = freshArticles[0];
+    isFreshLead = true;
+  } else {
+    // Trending pool sorted by engagement/score
+    const trendingPool = [...articles].sort((a, b) => {
+      const scoreA = (b.opportunityScore || 80) + (b.viewCount || 0) * 0.1;
+      const scoreB = (a.opportunityScore || 80) + (a.viewCount || 0) * 0.1;
+      return scoreB - scoreA;
+    });
+
+    const hourlyIndex = Math.floor(now / ONE_HOUR_MS) % Math.max(1, Math.min(trendingPool.length, 10));
+    mainStory = trendingPool[hourlyIndex] || articles[0];
+  }
+
+  // Side stories: next 3 top stories excluding mainStory
   const sideStories = articles.filter(a => a.id !== mainStory.id).slice(0, 3);
 
   const formatTimeAgo = (isoString: string) => {
-    const diffMin = Math.round((Date.now() - new Date(isoString).getTime()) / 60000);
+    const diffMin = Math.max(1, Math.round((now - new Date(isoString).getTime()) / 60000));
     if (diffMin < 60) return `${diffMin}m ago`;
     const diffHours = Math.round(diffMin / 60);
     if (diffHours < 24) return `${diffHours}h ago`;
     return new Date(isoString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  const getMinutesRemainingInHour = (isoString: string) => {
+    const ageMs = now - new Date(isoString).getTime();
+    const remainingMs = ONE_HOUR_MS - ageMs;
+    const remainingMin = Math.max(1, Math.round(remainingMs / 60000));
+    return remainingMin;
   };
 
   return (
@@ -30,6 +78,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onSelectArti
           <h2 className="text-xl sm:text-2xl font-black font-serif uppercase tracking-tight text-neutral-900 dark:text-white">
             Top Headlines Worldwide
           </h2>
+          {isFreshLead ? (
+            <span className="hidden sm:inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <Zap className="w-3 h-3 animate-bounce text-emerald-500" />
+              <span>1-Hour Breaking Priority Slot</span>
+            </span>
+          ) : (
+            <span className="hidden sm:inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+              <RefreshCw className="w-3 h-3 text-amber-500 animate-spin" />
+              <span>Hourly Trending Rotation</span>
+            </span>
+          )}
         </div>
         <span className="text-xs font-mono text-neutral-500 uppercase">
           International Bureau • worldplus.world
@@ -41,7 +100,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onSelectArti
         {/* Large Featured Lead Story (8 cols) */}
         <div 
           onClick={() => onSelectArticle(mainStory)}
-          className="lg:col-span-8 group cursor-pointer bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
+          className="lg:col-span-8 group cursor-pointer bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 relative"
         >
           {/* Image Container */}
           <div className="relative aspect-[16/9] w-full overflow-hidden bg-neutral-950">
@@ -54,11 +113,24 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onSelectArti
             <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent"></div>
 
             {/* Badges on image */}
-            <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+            <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
               <span className="px-3 py-1 bg-amber-500 text-neutral-950 font-bold uppercase text-xs tracking-wider rounded-md shadow-md">
                 {mainStory.categoryName}
               </span>
-              {mainStory.isBreaking && (
+              
+              {isFreshLead ? (
+                <span className="px-3 py-1 bg-red-600 text-white font-bold uppercase text-xs tracking-wider rounded-md shadow-md flex items-center space-x-1.5 animate-pulse">
+                  <Zap className="w-3.5 h-3.5" />
+                  <span>Fresh Lead ({getMinutesRemainingInHour(mainStory.publishedAt)}m in Top Slot)</span>
+                </span>
+              ) : (
+                <span className="px-3 py-1 bg-neutral-900/90 text-amber-400 border border-amber-400/40 font-bold uppercase text-xs tracking-wider rounded-md shadow-md flex items-center space-x-1.5">
+                  <Flame className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Trending Leader</span>
+                </span>
+              )}
+
+              {mainStory.isBreaking && !isFreshLead && (
                 <span className="px-2.5 py-1 bg-red-600 text-white font-bold uppercase text-xs tracking-wider rounded-md shadow-md animate-pulse">
                   Breaking
                 </span>
@@ -162,3 +234,4 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onSelectArti
     </section>
   );
 };
+

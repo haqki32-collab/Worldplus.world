@@ -17,11 +17,15 @@ export const CategorySections: React.FC<CategorySectionsProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<string>('technology');
 
-  const mainCategoryIds = ['technology', 'business', 'sports', 'entertainment', 'science', 'finance'];
-  const displayCategories = categories.filter(c => mainCategoryIds.includes(c.id));
+  const mainCategoryIds = [
+    'technology', 'business-industrial', 'finance', 'sports', 'entertainment', 
+    'science', 'health', 'games', 'autos', 'travel', 'food-drink', 'real-estate'
+  ];
+  const displayCategories = categories.filter(c => mainCategoryIds.includes(c.slug || c.id)).slice(0, 8);
+  const fallbackDisplay = displayCategories.length > 0 ? displayCategories : categories.slice(0, 8);
 
-  const currentCategory = categories.find(c => c.id === activeTab) || categories[0];
-  const categoryArticles = articles.filter(a => a.categoryId === activeTab);
+  const currentCategory = categories.find(c => c.id === activeTab || c.slug === activeTab) || categories[0];
+  const categoryArticles = articles.filter(a => a.categoryId === currentCategory?.id || a.categoryId === currentCategory?.slug);
   const leadArticle = categoryArticles[0];
   const secondaryArticles = categoryArticles.slice(1, 4);
 
@@ -38,12 +42,12 @@ export const CategorySections: React.FC<CategorySectionsProps> = ({
 
         {/* Category switcher tabs */}
         <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-1">
-          {displayCategories.map(cat => (
+          {fallbackDisplay.map(cat => (
             <button
               key={cat.id}
-              onClick={() => setActiveTab(cat.id)}
+              onClick={() => setActiveTab(cat.slug || cat.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
-                activeTab === cat.id
+                (activeTab === cat.id || activeTab === cat.slug)
                   ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-sm'
                   : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
               }`}
