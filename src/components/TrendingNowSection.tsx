@@ -99,7 +99,7 @@ export const TrendingNowSection: React.FC<TrendingNowSectionProps> = ({
               {/* Action bar */}
               <div className="pt-3 border-t border-neutral-700/50 flex items-center justify-between text-xs">
                 <span className="text-neutral-400 font-mono text-[11px]">
-                  Opportunity: <strong className="text-amber-400">{trend.opportunityScore}/100</strong>
+                  Global Wire Dispatch
                 </span>
 
                 {matchArticle ? (
@@ -107,16 +107,16 @@ export const TrendingNowSection: React.FC<TrendingNowSectionProps> = ({
                     onClick={() => onSelectArticle(matchArticle)}
                     className="flex items-center space-x-1 text-amber-400 hover:text-amber-300 font-bold font-mono transition-colors"
                   >
-                    <span>Read Coverage</span>
+                    <span>Read Full Story</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                   </button>
                 ) : (
                   <button
                     onClick={() => onGenerateFromTrend(trend)}
-                    className="flex items-center space-x-1 text-emerald-400 hover:text-emerald-300 font-bold font-mono transition-colors"
+                    className="flex items-center space-x-1 text-amber-400 hover:text-amber-300 font-bold font-mono transition-colors"
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Synthesize Article</span>
+                    <span>Read Report</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                   </button>
                 )}
               </div>

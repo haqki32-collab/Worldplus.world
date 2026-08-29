@@ -50,9 +50,9 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
 
           {/* Publishing Interval Badge */}
           <div className="pt-2 flex items-center space-x-4 text-xs font-mono text-neutral-400">
-            <span>Publishing Cadence: <strong className="text-amber-400">Every {category.publishingIntervalMinutes}m</strong></span>
+            <span>Global Coverage: <strong className="text-amber-400">24/7 Verified Wire</strong></span>
             <span>•</span>
-            <span>Monitored Coverage: <strong className="text-white">{categoryArticles.length} Articles</strong></span>
+            <span>Archived Reports: <strong className="text-white">{categoryArticles.length} Stories</strong></span>
           </div>
         </div>
 
@@ -127,7 +127,7 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
 
                 <div className="pt-4 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between text-xs text-neutral-400 font-mono">
                   <span>{leadStory.seo?.readingTimeMinutes || 4} min read</span>
-                  <span className="text-amber-500 font-bold">Trend Score: {leadStory.opportunityScore || 90}/100</span>
+                  <span className="text-amber-500 font-bold">WorldPlus Wire</span>
                 </div>
               </div>
             </div>
@@ -168,7 +168,7 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
 
                   <div className="px-5 pb-5 pt-2 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between text-xs font-mono text-neutral-400">
                     <span>{art.publishedAt ? new Date(art.publishedAt).toLocaleDateString() : 'Recent'}</span>
-                    <span className="text-amber-500">{art.opportunityScore || 90} Score</span>
+                    <span className="text-amber-500 font-medium">{art.seo?.readingTimeMinutes || 4} min read</span>
                   </div>
                 </div>
               ))}

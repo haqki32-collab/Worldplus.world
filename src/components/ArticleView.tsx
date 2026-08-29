@@ -220,7 +220,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
         </div>
       </div>
 
-      {/* Category, Badges, Opportunity Score */}
+      {/* Category and Location Badges */}
       <div className="flex flex-wrap items-center gap-2.5 mb-4">
         <span className="px-3 py-1 bg-amber-500 text-neutral-950 font-bold uppercase text-xs tracking-wider rounded-md">
           {article.categoryName || 'General'}
@@ -236,13 +236,9 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
         </span>
         {article.isBreaking && (
           <span className="px-2.5 py-1 bg-red-600 text-white font-bold uppercase text-xs tracking-wider rounded-md animate-pulse">
-            Breaking
+            Breaking News
           </span>
         )}
-        <div className="ml-auto bg-amber-500/10 text-amber-500 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-mono font-bold flex items-center space-x-1.5">
-          <Flame className="w-3.5 h-3.5 fill-current" />
-          <span>Trend Score: {article.opportunityScore}/100</span>
-        </div>
       </div>
 
       {/* Main Headline */}
@@ -263,15 +259,17 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
           </div>
           <div>
             <div className="font-semibold text-neutral-900 dark:text-white">
-              WorldPlus International Editorial Pool
+              WorldPlus International Editorial Board
             </div>
             <div className="flex items-center space-x-2 font-mono text-[11px]">
               <span className="text-emerald-500 flex items-center space-x-1">
                 <ShieldCheck className="w-3 h-3" />
-                <span>Multi-Agent Verified</span>
+                <span>Verified Independent Reporting</span>
               </span>
               <span>•</span>
               <span>{new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+              <span>•</span>
+              <span>{article.seo?.readingTimeMinutes || 4} min read</span>
             </div>
           </div>
         </div>
@@ -316,17 +314,9 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
           <button
             onClick={handleShare}
             className="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 transition-colors relative"
-            title="Share and copy canonical URL"
+            title="Share article"
           >
             {copiedLink ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4" />}
-          </button>
-
-          <button
-            onClick={() => setIsSchemaOpen(true)}
-            className="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 transition-colors"
-            title="Inspect Schema.org JSON-LD Structured Data"
-          >
-            <Code className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -367,45 +357,19 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
       {/* AdSense Top In-Article Slot */}
       <AdSenseBanner slotType="in-article" adSlotId="9823471029" />
 
-      {/* Table of Contents & Quick Facts Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 my-8 p-6 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl">
-        <div className="md:col-span-6 space-y-2">
-          <div className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-mono mb-3">
-            Editorial Sections Index
-          </div>
-          <ul className="space-y-1.5 text-xs text-neutral-700 dark:text-neutral-300">
-            {article.sections.map((sec, idx) => (
-              <li key={idx} className="flex items-center space-x-2">
-                <span className="text-amber-500 font-mono font-bold">0{idx + 1}.</span>
-                <span className="hover:text-amber-500 font-medium truncate">{sec.heading}</span>
-              </li>
-            ))}
-          </ul>
+      {/* Story Sections Index & Executive Takeaway */}
+      <div className="my-8 p-6 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl">
+        <div className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-mono mb-3">
+          Key Story Sections
         </div>
-
-        <div className="md:col-span-6 border-t md:border-t-0 md:border-l border-neutral-200 dark:border-neutral-800 pt-4 md:pt-0 md:pl-6 space-y-3">
-          <div className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-mono mb-2">
-            Verification Specifications
-          </div>
-          <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-            <div className="bg-white dark:bg-neutral-800 p-2.5 rounded-lg border border-neutral-200 dark:border-neutral-700/60">
-              <span className="text-neutral-400 block text-[10px]">Word Count</span>
-              <span className="font-bold text-neutral-900 dark:text-white">{article.seo.wordCount} words</span>
-            </div>
-            <div className="bg-white dark:bg-neutral-800 p-2.5 rounded-lg border border-neutral-200 dark:border-neutral-700/60">
-              <span className="text-neutral-400 block text-[10px]">Reading Time</span>
-              <span className="font-bold text-neutral-900 dark:text-white">{article.seo.readingTimeMinutes} Minutes</span>
-            </div>
-            <div className="bg-white dark:bg-neutral-800 p-2.5 rounded-lg border border-neutral-200 dark:border-neutral-700/60">
-              <span className="text-neutral-400 block text-[10px]">Contextual Images</span>
-              <span className="font-bold text-amber-500">{article.images.length} High-Res Assets</span>
-            </div>
-            <div className="bg-white dark:bg-neutral-800 p-2.5 rounded-lg border border-neutral-200 dark:border-neutral-700/60">
-              <span className="text-neutral-400 block text-[10px]">Quality Score</span>
-              <span className="font-bold text-emerald-500">{article.qualityReport?.overallScore || 96}/100</span>
-            </div>
-          </div>
-        </div>
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-neutral-700 dark:text-neutral-300">
+          {article.sections.map((sec, idx) => (
+            <li key={idx} className="flex items-center space-x-2">
+              <span className="text-amber-500 font-mono font-bold">0{idx + 1}.</span>
+              <span className="font-medium truncate">{sec.heading}</span>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Main Editorial Article Body with Sections and Contextual Images */}

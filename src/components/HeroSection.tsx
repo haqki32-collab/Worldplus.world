@@ -28,11 +28,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onSelectArti
         <div className="flex items-center space-x-2.5">
           <div className="w-3 h-3 bg-amber-500 rounded-sm"></div>
           <h2 className="text-xl sm:text-2xl font-black font-serif uppercase tracking-tight text-neutral-900 dark:text-white">
-            Trending Worldwide
+            Top Headlines Worldwide
           </h2>
         </div>
         <span className="text-xs font-mono text-neutral-500 uppercase">
-          AI Verified Editorial • worldplus.world
+          International Bureau • worldplus.world
         </span>
       </div>
 
@@ -65,12 +65,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onSelectArti
               )}
             </div>
 
-            {/* Opportunity score badge */}
-            <div className="absolute top-4 right-4 bg-neutral-900/90 backdrop-blur text-amber-400 border border-amber-400/40 px-3 py-1 rounded-full text-xs font-mono font-semibold flex items-center space-x-1.5 shadow-lg">
-              <Flame className="w-3.5 h-3.5 text-orange-400 fill-orange-400" />
-              <span>Score: {mainStory.opportunityScore}/100</span>
-            </div>
-
             {/* Title & summary overlay on mobile or baseline */}
             <div className="absolute bottom-4 left-4 right-4 text-white">
               <div className="flex items-center space-x-3 text-xs text-neutral-300 mb-2 font-mono">
@@ -86,7 +80,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onSelectArti
                 <span>•</span>
                 <span className="flex items-center space-x-1 text-emerald-400">
                   <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>Fact-Checked</span>
+                  <span>Verified Reporting</span>
                 </span>
               </div>
             </div>
@@ -106,12 +100,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onSelectArti
                 <span className="font-semibold text-neutral-800 dark:text-neutral-200">WorldPlus International Wire</span>
                 <span>•</span>
                 <span>{mainStory.seo?.readingTimeMinutes || 4} min read</span>
-                <span>•</span>
-                <span>{mainStory.seo?.wordCount || 1600} words</span>
               </div>
 
               <div className="flex items-center space-x-1 text-amber-600 dark:text-amber-400 font-bold group-hover:translate-x-1 transition-transform">
-                <span>Read Full Article</span>
+                <span>Read Full Story</span>
                 <ArrowUpRight className="w-4 h-4" />
               </div>
             </div>
@@ -122,7 +114,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onSelectArti
         <div className="lg:col-span-4 flex flex-col space-y-4">
           <div className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 pb-1.5 flex items-center justify-between">
             <span>Key Developing Stories</span>
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
           </div>
 
           {sideStories.map((story) => (

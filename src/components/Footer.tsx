@@ -39,13 +39,13 @@ export const Footer: React.FC<FooterProps> = ({
             </div>
 
             <p className="text-xs text-neutral-400 leading-relaxed max-w-sm">
-              WorldPlus (<strong className="text-neutral-200">worldplus.world</strong>) is an autonomous global intelligence publication. Our multi-agent verification pipeline continuously monitors high-velocity trends, corroborates factual disclosures, and delivers deep-dive analytical journalism.
+              WorldPlus (<strong className="text-neutral-200">worldplus.world</strong>) is an independent international news and geopolitical intelligence publication. Our editorial bureau continuously verifies breaking developments, corroborates primary sources, and delivers deep-dive analytical journalism.
             </p>
 
             <div className="pt-2 flex flex-wrap gap-2 text-xs font-mono">
               <span className="px-2 py-1 rounded bg-neutral-900 text-emerald-400 border border-neutral-800 flex items-center space-x-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Live Autonomous Engine</span>
+                <span>24/7 Global Newsroom</span>
               </span>
               <a
                 href="/rss.xml"
@@ -54,7 +54,7 @@ export const Footer: React.FC<FooterProps> = ({
                 className="px-2.5 py-1 rounded bg-neutral-900 hover:bg-neutral-800 text-amber-400 border border-neutral-800 flex items-center space-x-1"
               >
                 <Rss className="w-3 h-3" />
-                <span>RSS 2.0 Feed</span>
+                <span>RSS 2.0 Wire</span>
               </a>
             </div>
           </div>

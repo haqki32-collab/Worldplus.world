@@ -86,9 +86,6 @@ export const TrendingByCountry: React.FC<TrendingByCountryProps> = ({
                   <div className="absolute top-3 left-3 bg-neutral-900/90 text-white text-[10px] font-mono px-2 py-0.5 rounded border border-neutral-700">
                     {article.categoryName || 'General'}
                   </div>
-                  <div className="absolute top-3 right-3 bg-amber-500 text-neutral-950 text-[10px] font-bold font-mono px-2 py-0.5 rounded">
-                    {article.opportunityScore || 90} Score
-                  </div>
                 </div>
 
                 <div className="p-5">

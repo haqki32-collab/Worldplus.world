@@ -13,8 +13,8 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ onSuccess, onC
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Default master passcode for owner
-    const validCodes = ['worldplus2026', 'admin', 'worldplus'];
-    if (validCodes.includes(passcode.trim().toLowerCase()) || passcode.trim() === 'worldplus2026') {
+    const validCodes = ['03265520658', 'worldplus2026', 'admin', 'worldplus'];
+    if (validCodes.includes(passcode.trim().toLowerCase()) || passcode.trim() === '03265520658' || passcode.trim() === 'worldplus2026') {
       localStorage.setItem('worldplus_admin_authenticated', 'true');
       onSuccess();
     } else {

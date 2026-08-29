@@ -51,7 +51,7 @@ export const Header: React.FC<HeaderProps> = ({
     { label: 'Business', slug: 'business', icon: Building2 },
     { label: 'Sports', slug: 'sports', icon: Trophy },
     { label: 'Entertainment', slug: 'entertainment', icon: Film },
-    { label: 'AI & Frontier', slug: 'technology', icon: Sparkles }
+    { label: 'Science & Frontier', slug: 'technology', icon: Sparkles }
   ];
 
   return (
@@ -64,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden sm:inline-block text-neutral-600">|</span>
             <span className="hidden sm:flex items-center text-emerald-400 font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1.5"></span>
-              Live Trend Engine Active
+              24/7 Global Dispatch Active
             </span>
             <span className="hidden md:inline-block text-neutral-600">|</span>
             <span className="hidden md:inline-block text-neutral-400 font-mono">

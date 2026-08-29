@@ -86,7 +86,7 @@ export const CountryPage: React.FC<CountryPageProps> = ({
 
               <div className="px-5 pb-5 pt-2 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between text-xs font-mono text-neutral-400">
                 <span>{article.publishedAt ? new Date(article.publishedAt).toLocaleDateString() : 'Recent'}</span>
-                <span className="text-amber-500">{article.opportunityScore || 90} Score</span>
+                <span className="text-amber-500 font-medium">{article.seo?.readingTimeMinutes || 4} min read</span>
               </div>
             </div>
           ))}
