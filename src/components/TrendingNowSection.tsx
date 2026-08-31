@@ -17,6 +17,8 @@ export const TrendingNowSection: React.FC<TrendingNowSectionProps> = ({
 }) => {
   const topTrends = trends.slice(0, 6);
 
+  if (topTrends.length === 0) return null;
+
   const findMatchingArticle = (trend: TrendItem) => {
     return articles.find(a => 
       a.title.toLowerCase().includes(trend.topic.toLowerCase()) ||

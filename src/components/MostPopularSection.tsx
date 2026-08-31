@@ -10,6 +10,8 @@ interface MostPopularSectionProps {
 export const MostPopularSection: React.FC<MostPopularSectionProps> = ({ articles, onSelectArticle }) => {
   const sortedArticles = [...articles].sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0)).slice(0, 5);
 
+  if (sortedArticles.length === 0) return null;
+
   return (
     <section className="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 mb-12 shadow-sm">
       <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-3 mb-5">

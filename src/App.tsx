@@ -23,8 +23,7 @@ import {
   subscribeToFirestoreArticles, 
   fetchArticlesFromFirestore, 
   likeArticleInFirestore, 
-  saveArticleToFirestore,
-  seedFirestoreIfEmpty
+  saveArticleToFirestore
 } from './lib/firestoreClient.js';
 
 export default function App() {
@@ -124,19 +123,18 @@ export default function App() {
       const countJson = countRes && countRes.ok ? await countRes.json() : null;
       const trendJson = trendRes && trendRes.ok ? await trendRes.json() : null;
 
-      if (artJson && Array.isArray(artJson) && artJson.length > 0) {
+      if (artJson && Array.isArray(artJson)) {
         setArticles(artJson);
       } else {
-        // Fetch from Firestore directly if API is absent or empty
         const firestoreArts = await fetchArticlesFromFirestore();
-        if (firestoreArts && firestoreArts.length > 0) {
+        if (firestoreArts && Array.isArray(firestoreArts)) {
           setArticles(firestoreArts);
         }
       }
 
       if (catJson && Array.isArray(catJson) && catJson.length > 0) setCategories(catJson);
       if (countJson && Array.isArray(countJson) && countJson.length > 0) setCountries(countJson);
-      if (trendJson && Array.isArray(trendJson) && trendJson.length > 0) setTrends(trendJson);
+      if (trendJson && Array.isArray(trendJson)) setTrends(trendJson);
 
       // Parse initial route from browser URL
       syncRouteFromPath(
@@ -157,19 +155,8 @@ export default function App() {
 
     // Direct real-time listener to Firestore articles collection
     const unsubscribeFirestore = subscribeToFirestoreArticles((liveArticles) => {
-      if (liveArticles && liveArticles.length > 0) {
-        setArticles(prev => {
-          if (liveArticles.length > prev.length && prev.length > 0) {
-            const latest = liveArticles[0];
-            showToast(`New story published live: "${latest.title.slice(0, 45)}..."`);
-          }
-          return liveArticles;
-        });
-      }
+      setArticles(liveArticles || []);
     });
-
-    // Ensure Firestore has seed articles
-    seedFirestoreIfEmpty().catch(console.warn);
 
     // Listen for browser Back and Forward history buttons
     const handlePopState = () => {
@@ -344,6 +331,32 @@ export default function App() {
             {/* HOME VIEW */}
             {currentView === 'home' && (
               <div className="max-w-7xl mx-auto px-4 py-8">
+                {/* Clean Slate Notification if 0 articles */}
+                {articles.length === 0 && (
+                  <div className="mb-8 bg-neutral-900 border border-neutral-800 rounded-2xl p-8 text-center text-white shadow-xl">
+                    <div className="max-w-xl mx-auto space-y-4">
+                      <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono font-bold">
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        <span>System Reset Complete</span>
+                      </div>
+                      <h2 className="text-2xl sm:text-3xl font-serif font-black">Clean Editorial Desk Ready</h2>
+                      <p className="text-neutral-400 text-sm leading-relaxed font-sans">
+                        All previous articles and automated publishers have been deleted. You have a clean slate to create, write, or import your new articles.
+                      </p>
+                      <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+                        <button
+                          onClick={() => {
+                            setIsAdminLoginOpen(true);
+                          }}
+                          className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md"
+                        >
+                          Open Admin Desk to Create Articles
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Hero Section */}
                 <HeroSection articles={articles} onSelectArticle={handleSelectArticle} />
 

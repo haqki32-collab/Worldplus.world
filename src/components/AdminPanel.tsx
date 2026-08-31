@@ -7,9 +7,9 @@ import {
 import { Article, Category, Country, AutomationLog, AdminStats, TrendItem } from '../types.js';
 import { getCloudinaryCloudName, setCloudinaryCloudName } from '../lib/cloudinary.js';
 import { 
-  seedFirestoreIfEmpty, 
   saveArticleToFirestore, 
   deleteArticleFromFirestore,
+  clearAllArticlesFromFirestore,
   addLogToFirestore
 } from '../lib/firestoreClient.js';
 import { INITIAL_ARTICLES } from '../data/initialData.js';
@@ -241,6 +241,25 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     } finally {
       setIsSyncingFirebase(false);
       setTimeout(() => setSyncStatusMsg(null), 5000);
+    }
+  };
+
+  const [isClearingArticles, setIsClearingArticles] = useState(false);
+
+  const handleClearAllArticles = async () => {
+    if (!window.confirm('Confirm: Delete ALL articles from database and memory? This cannot be undone.')) {
+      return;
+    }
+    setIsClearingArticles(true);
+    try {
+      await fetch('/api/articles/clear-all', { method: 'POST' }).catch(() => null);
+      await clearAllArticlesFromFirestore();
+      onRefreshData();
+      fetchAdminData();
+    } catch (err: any) {
+      console.error('Error clearing articles:', err);
+    } finally {
+      setIsClearingArticles(false);
     }
   };
 
@@ -809,77 +828,113 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         {/* ARTICLES MANAGEMENT TAB */}
         {activeTab === 'articles' && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-serif font-bold text-lg text-white">Article Archive &amp; Inventory</h3>
-              <button
-                onClick={() => setIsGenerateModalOpen(true)}
-                className="flex items-center space-x-1.5 px-3.5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Generate Article</span>
-              </button>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="font-serif font-bold text-lg text-white">Article Archive &amp; Inventory</h3>
+                <p className="text-xs text-neutral-400">Total {articles.length} article(s) registered in system</p>
+              </div>
+              <div className="flex items-center space-x-2">
+                {articles.length > 0 && (
+                  <button
+                    onClick={handleClearAllArticles}
+                    disabled={isClearingArticles}
+                    className="flex items-center space-x-1.5 px-3.5 py-2 rounded-lg bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 font-bold text-xs transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>{isClearingArticles ? 'Clearing...' : 'Delete All Articles'}</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsGenerateModalOpen(true)}
+                  className="flex items-center space-x-1.5 px-3.5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Create / Generate Article</span>
+                </button>
+              </div>
             </div>
 
-            <div className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden">
-              <table className="w-full text-left text-xs font-mono">
-                <thead className="bg-neutral-950 text-neutral-400 border-b border-neutral-800">
-                  <tr>
-                    <th className="p-3.5">Headline / Title</th>
-                    <th className="p-3.5">Category</th>
-                    <th className="p-3.5">Region</th>
-                    <th className="p-3.5">Score</th>
-                    <th className="p-3.5">Status</th>
-                    <th className="p-3.5 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-800">
-                  {articles.map((art) => (
-                    <tr key={art.id} className="hover:bg-neutral-800/40 transition-colors">
-                      <td className="p-3.5">
-                        <div className="font-serif font-bold text-white text-sm line-clamp-1">{art.title}</div>
-                        <div className="text-[10px] text-neutral-500">Slug: {art.seo.slug}</div>
-                      </td>
-                      <td className="p-3.5 text-amber-400 font-bold uppercase">{art.categoryName}</td>
-                      <td className="p-3.5 text-neutral-300">{art.countryName}</td>
-                      <td className="p-3.5 text-amber-400 font-bold">{art.opportunityScore}/100</td>
-                      <td className="p-3.5">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                          art.status === 'published' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-neutral-800 text-neutral-400'
-                        }`}>
-                          {art.status}
-                        </span>
-                      </td>
-                      <td className="p-3.5 text-right space-x-2">
-                        <button
-                          onClick={() => {
-                            onClose();
-                            onSelectArticle(art);
-                          }}
-                          className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300"
-                          title="View live article"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleTogglePublish(art)}
-                          className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-amber-400"
-                          title="Toggle publish status"
-                        >
-                          {art.status === 'published' ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-                        </button>
-                        <button
-                          onClick={() => handleDeleteArticle(art.id)}
-                          className="p-1.5 rounded bg-neutral-800 hover:bg-red-500/30 text-red-400"
-                          title="Delete article"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </td>
+            {articles.length === 0 ? (
+              <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-12 text-center space-y-4">
+                <div className="w-12 h-12 rounded-full bg-neutral-800 text-neutral-400 mx-auto flex items-center justify-center">
+                  <FileText className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-serif font-bold text-white text-base">No Articles in Database</h4>
+                  <p className="text-xs text-neutral-400 max-w-md mx-auto">
+                    All previous articles and automated publishers have been removed. You can now build and publish your new articles from scratch.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsGenerateModalOpen(true)}
+                  className="inline-flex items-center space-x-2 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Write or Generate First Article</span>
+                </button>
+              </div>
+            ) : (
+              <div className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden">
+                <table className="w-full text-left text-xs font-mono">
+                  <thead className="bg-neutral-950 text-neutral-400 border-b border-neutral-800">
+                    <tr>
+                      <th className="p-3.5">Headline / Title</th>
+                      <th className="p-3.5">Category</th>
+                      <th className="p-3.5">Region</th>
+                      <th className="p-3.5">Score</th>
+                      <th className="p-3.5">Status</th>
+                      <th className="p-3.5 text-right">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-800">
+                    {articles.map((art) => (
+                      <tr key={art.id} className="hover:bg-neutral-800/40 transition-colors">
+                        <td className="p-3.5">
+                          <div className="font-serif font-bold text-white text-sm line-clamp-1">{art.title}</div>
+                          <div className="text-[10px] text-neutral-500">Slug: {art.seo?.slug || art.id}</div>
+                        </td>
+                        <td className="p-3.5 text-amber-400 font-bold uppercase">{art.categoryName}</td>
+                        <td className="p-3.5 text-neutral-300">{art.countryName}</td>
+                        <td className="p-3.5 text-amber-400 font-bold">{art.opportunityScore || 90}/100</td>
+                        <td className="p-3.5">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                            art.status === 'published' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-neutral-800 text-neutral-400'
+                          }`}>
+                            {art.status}
+                          </span>
+                        </td>
+                        <td className="p-3.5 text-right space-x-2">
+                          <button
+                            onClick={() => {
+                              onClose();
+                              onSelectArticle(art);
+                            }}
+                            className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300"
+                            title="View live article"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleTogglePublish(art)}
+                            className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-amber-400"
+                            title="Toggle publish status"
+                          >
+                            {art.status === 'published' ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                          </button>
+                          <button
+                            onClick={() => handleDeleteArticle(art.id)}
+                            className="p-1.5 rounded bg-neutral-800 hover:bg-red-500/30 text-red-400"
+                            title="Delete article"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 

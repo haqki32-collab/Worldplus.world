@@ -15,7 +15,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { Article, Category, Country, TrendItem, AutomationLog } from '../types';
-import { INITIAL_ARTICLES, INITIAL_CATEGORIES, INITIAL_COUNTRIES, INITIAL_TRENDS } from '../data/initialData';
+import { INITIAL_CATEGORIES, INITIAL_COUNTRIES } from '../data/initialData';
 
 const ARTICLES_COLLECTION = 'articles';
 const CATEGORIES_COLLECTION = 'categories';
@@ -45,15 +45,7 @@ export function subscribeToFirestoreArticles(
           });
           onUpdate(articles);
         } else {
-          // If Firestore is empty, auto-seed with initial data
-          console.log('[Firestore] Articles collection is empty. Seeding initial articles...');
-          seedFirestoreIfEmpty().then((seeded) => {
-            if (seeded) {
-              onUpdate(INITIAL_ARTICLES);
-            }
-          }).catch((err) => {
-            console.warn('[Firestore] Error auto-seeding:', err);
-          });
+          onUpdate([]);
         }
       },
       (error) => {
@@ -79,9 +71,7 @@ export async function fetchArticlesFromFirestore(): Promise<Article[]> {
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
-      // Seed if empty
-      await seedFirestoreIfEmpty();
-      return INITIAL_ARTICLES;
+      return [];
     }
 
     const articles: Article[] = [];
@@ -91,7 +81,7 @@ export async function fetchArticlesFromFirestore(): Promise<Article[]> {
     return articles;
   } catch (error) {
     console.warn('[Firestore] Failed to fetch articles from Firestore:', error);
-    return INITIAL_ARTICLES;
+    return [];
   }
 }
 
@@ -141,53 +131,53 @@ export async function deleteArticleFromFirestore(articleId: string): Promise<boo
 }
 
 /**
- * Seed Firestore with initial articles, categories, countries, and trends if empty
+ * Clear all articles from Firestore
  */
-export async function seedFirestoreIfEmpty(force = false): Promise<boolean> {
+export async function clearAllArticlesFromFirestore(): Promise<boolean> {
   try {
     const articlesRef = collection(db, ARTICLES_COLLECTION);
-    const snapshot = await getDocs(query(articlesRef, limit(1)));
-
-    if (!snapshot.empty && !force) {
-      return false; // Already has data
-    }
-
-    console.log('[Firestore] Writing initial articles & taxonomy to Firebase...');
-    
-    // Batch write articles
+    const snapshot = await getDocs(articlesRef);
     const batch = writeBatch(db);
-
-    for (const article of INITIAL_ARTICLES) {
-      const artDoc = doc(db, ARTICLES_COLLECTION, article.id);
-      batch.set(artDoc, article, { merge: true });
-    }
-
-    for (const category of INITIAL_CATEGORIES) {
-      const catDoc = doc(db, CATEGORIES_COLLECTION, category.id);
-      batch.set(catDoc, category, { merge: true });
-    }
-
-    for (const country of INITIAL_COUNTRIES.slice(0, 10)) {
-      const countDoc = doc(db, COUNTRIES_COLLECTION, country.code);
-      batch.set(countDoc, country, { merge: true });
-    }
-
-    for (const trend of INITIAL_TRENDS) {
-      const trendDoc = doc(db, TRENDS_COLLECTION, trend.id);
-      batch.set(trendDoc, trend, { merge: true });
-    }
-
+    snapshot.docs.forEach((docSnap) => {
+      batch.delete(docSnap.ref);
+    });
     await batch.commit();
-    console.log('[Firestore] Seed complete! Articles are now live in Firestore.');
+    console.log('[Firestore] All articles removed from Firestore.');
     return true;
   } catch (error) {
-    console.error('[Firestore] Failed to seed database:', error);
+    console.error('[Firestore] Failed to clear articles from Firestore:', error);
     return false;
   }
 }
 
 /**
- * Log an automation action to Firestore
+ * Seed categories and countries taxonomy into Firestore
+ */
+export async function seedTaxonomyIfEmpty(): Promise<boolean> {
+  try {
+    const catRef = collection(db, CATEGORIES_COLLECTION);
+    const snapshot = await getDocs(query(catRef, limit(1)));
+    if (!snapshot.empty) return false;
+
+    const batch = writeBatch(db);
+    for (const category of INITIAL_CATEGORIES) {
+      const catDoc = doc(db, CATEGORIES_COLLECTION, category.id);
+      batch.set(catDoc, category, { merge: true });
+    }
+    for (const country of INITIAL_COUNTRIES.slice(0, 10)) {
+      const countDoc = doc(db, COUNTRIES_COLLECTION, country.code);
+      batch.set(countDoc, country, { merge: true });
+    }
+    await batch.commit();
+    return true;
+  } catch (error) {
+    console.warn('[Firestore] Failed to seed taxonomy:', error);
+    return false;
+  }
+}
+
+/**
+ * Log an action to Firestore
  */
 export async function addLogToFirestore(log: AutomationLog): Promise<void> {
   try {

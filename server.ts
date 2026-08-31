@@ -142,6 +142,16 @@ async function startServer() {
     res.json(db.articles[idx]);
   });
 
+  app.delete('/api/articles', (req, res) => {
+    const result = db.clearAllArticles();
+    res.json(result);
+  });
+
+  app.post('/api/articles/clear-all', (req, res) => {
+    const result = db.clearAllArticles();
+    res.json(result);
+  });
+
   app.delete('/api/articles/:id', (req, res) => {
     const { id } = req.params;
     const idx = db.articles.findIndex(a => a.id === id);
@@ -342,28 +352,6 @@ async function startServer() {
     }
     res.json({ masterFrequencyMinutes: db.masterPublishingFrequencyMinutes });
   });
-
-  // Auto-sync real RSS feeds on startup in the background
-  setTimeout(() => {
-    rssService.syncRealNewsToDatabase(10).catch(e => console.warn('[Startup RSS Sync Note]:', e));
-  }, 2000);
-
-  // Background automated interval timer: Runs every 1 minute (60 seconds) publishing across all categories
-  setInterval(async () => {
-    if (db.isAutomationActive) {
-      console.log('[WorldPlus 1-Min Auto-Publisher] Executing scheduled 1-minute all-categories publishing blast...');
-      try {
-        await aiService.runAllCategoriesPublishingCycle();
-      } catch (err) {
-        console.error('[WorldPlus 1-Min Auto-Publisher] Error during background cycle:', err);
-      }
-    }
-  }, 60 * 1000);
-
-  // Periodic Real News Wire Sync: every 5 minutes pulls fresh breaking BBC & Dawn RSS wire
-  setInterval(() => {
-    rssService.syncRealNewsToDatabase(4).catch(e => console.warn('[Periodic RSS Wire Sync Note]:', e));
-  }, 5 * 60 * 1000);
 
   // Vite middleware setup
   if (process.env.NODE_ENV !== 'production') {
