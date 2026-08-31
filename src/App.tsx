@@ -477,6 +477,14 @@ export default function App() {
         onSelectCategory={handleSelectCategory}
         onSelectCountry={handleSelectCountry}
         onOpenPolicy={handleOpenPolicy}
+        onOpenAdmin={() => {
+          const isAuth = localStorage.getItem('worldplus_admin_authenticated') === 'true';
+          if (isAuth) {
+            setIsAdminOpen(true);
+          } else {
+            setIsAdminLoginOpen(true);
+          }
+        }}
       />
 
       {/* Cookie Consent Banner for AdSense / GDPR / CCPA */}

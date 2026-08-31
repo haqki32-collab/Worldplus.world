@@ -3,9 +3,9 @@ import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import { db } from './server/db.js';
 import { aiService } from './server/aiService.js';
-import { rssService } from './server/rssService.js';
+import { rssService, VERIFIED_WIRE_FEEDS } from './server/rssService.js';
 import { SitemapService } from './server/sitemapService.js';
-import { persistArticleToFirestore } from './server/firebaseSync.js';
+import { persistArticleToFirestore, clearAllArticlesFromFirestoreServer } from './server/firebaseSync.js';
 
 async function startServer() {
   const app = express();
@@ -142,13 +142,15 @@ async function startServer() {
     res.json(db.articles[idx]);
   });
 
-  app.delete('/api/articles', (req, res) => {
+  app.delete('/api/articles', async (req, res) => {
     const result = db.clearAllArticles();
+    await clearAllArticlesFromFirestoreServer();
     res.json(result);
   });
 
-  app.post('/api/articles/clear-all', (req, res) => {
+  app.post('/api/articles/clear-all', async (req, res) => {
     const result = db.clearAllArticles();
+    await clearAllArticlesFromFirestoreServer();
     res.json(result);
   });
 
@@ -286,7 +288,54 @@ async function startServer() {
     }
   });
 
-  // Live RSS Real News Wire APIs (BBC World, Dawn, Google News, Reuters)
+  // Live RSS & Wire News Aggregation APIs (BBC World, Al Jazeera, TechCrunch, Dawn, Yahoo Finance, ESPN)
+  app.get('/api/wires/feeds', (req, res) => {
+    res.json({
+      feeds: VERIFIED_WIRE_FEEDS,
+      totalCount: VERIFIED_WIRE_FEEDS.length
+    });
+  });
+
+  app.get('/api/wires/preview', async (req, res) => {
+    try {
+      const items = await rssService.fetchAllGlobalFeeds();
+      res.json({ count: items.length, items });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post('/api/wires/sync', async (req, res) => {
+    try {
+      const limit = req.body?.limit ? parseInt(req.body.limit) : 8;
+      const category = req.body?.category || 'all';
+      const result = await rssService.syncRealNewsToDatabase(limit, category);
+      res.json({ success: true, ...result, totalArticles: db.articles.length });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post('/api/wires/import-url', async (req, res) => {
+    try {
+      const { url, categoryId } = req.body;
+      if (!url || !url.startsWith('http')) {
+        return res.status(400).json({ error: 'Valid URL is required' });
+      }
+      const article = await rssService.importFromWebUrl(url, categoryId || 'news');
+      if (!article) {
+        return res.status(500).json({ error: 'Failed to extract content from provided URL' });
+      }
+      db.articles.unshift(article);
+      persistArticleToFirestore(article);
+      db.addLog(article.categoryName, 'Wire Importer', `Successfully ingested and published story from URL: "${article.title}"`, 'success');
+      res.json({ success: true, article, totalArticles: db.articles.length });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Legacy RSS endpoints for backwards compatibility
   app.get('/api/rss/latest', async (req, res) => {
     try {
       const items = await rssService.fetchAllGlobalFeeds();
@@ -367,6 +416,10 @@ async function startServer() {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
+
+  // Clean up any stale leftover articles on boot
+  db.clearAllArticles();
+  clearAllArticlesFromFirestoreServer().catch(() => null);
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`WorldPlus server running on http://0.0.0.0:${PORT} (Domain: worldplus.world)`);

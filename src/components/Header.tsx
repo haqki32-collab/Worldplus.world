@@ -229,8 +229,19 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
 
-        {/* Quick action buttons & Mobile menu */}
+        {/* Quick action buttons, Admin Panel button & Mobile menu */}
         <div className="flex items-center space-x-2.5">
+          {/* Direct Admin Panel Trigger Button */}
+          <button
+            id="admin-panel-header-btn"
+            onClick={onOpenAdmin}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs transition-all shadow-md hover:shadow-amber-500/20"
+            title="Open Editorial Desk & Admin Control Panel"
+          >
+            <ShieldCheck className="w-4 h-4 text-neutral-950" />
+            <span className="font-mono tracking-tight">Admin Desk</span>
+          </button>
+
           <button
             onClick={onOpenSearch}
             className="p-2 rounded-lg bg-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-700 md:hidden"
@@ -422,6 +433,18 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Mobile Drawer Menu with All Categories */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-neutral-900 border-t border-neutral-800 px-4 py-4 space-y-4 max-h-[85vh] overflow-y-auto">
+          {/* Admin Panel Quick Access in Mobile Drawer */}
+          <button
+            onClick={() => {
+              setIsMobileMenuOpen(false);
+              onOpenAdmin();
+            }}
+            className="w-full py-2.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs flex items-center justify-center space-x-2 font-mono shadow-md"
+          >
+            <ShieldCheck className="w-4 h-4" />
+            <span>Open Admin / Editorial Desk</span>
+          </button>
+
           <div className="flex items-center justify-between text-xs font-semibold uppercase text-neutral-400 tracking-wider">
             <span>All 25 Editorial Desks</span>
             <span className="text-amber-400 font-mono">{categories.length} Total</span>

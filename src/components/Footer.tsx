@@ -9,6 +9,7 @@ interface FooterProps {
   onSelectCategory: (categorySlug: string) => void;
   onSelectCountry: (countryCode: string) => void;
   onOpenPolicy: (policyType: PolicyType) => void;
+  onOpenAdmin?: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
@@ -16,7 +17,8 @@ export const Footer: React.FC<FooterProps> = ({
   countries,
   onSelectCategory,
   onSelectCountry,
-  onOpenPolicy
+  onOpenPolicy,
+  onOpenAdmin
 }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -57,6 +59,15 @@ export const Footer: React.FC<FooterProps> = ({
                 <Rss className="w-3 h-3" />
                 <span>RSS 2.0 Wire</span>
               </a>
+              {onOpenAdmin && (
+                <button
+                  onClick={onOpenAdmin}
+                  className="px-2.5 py-1 rounded bg-amber-500/20 hover:bg-amber-500 text-amber-400 hover:text-neutral-950 font-bold border border-amber-500/30 flex items-center space-x-1 transition-colors"
+                >
+                  <Shield className="w-3 h-3" />
+                  <span>Admin Desk</span>
+                </button>
+              )}
             </div>
           </div>
 

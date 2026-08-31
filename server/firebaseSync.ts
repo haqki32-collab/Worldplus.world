@@ -57,3 +57,20 @@ export async function persistArticleToFirestore(article: Article) {
     console.error('Error persisting article to Firestore:', err);
   }
 }
+
+export async function clearAllArticlesFromFirestoreServer() {
+  try {
+    const db = getFirestoreSync();
+    if (!db) return;
+    const articlesRef = collection(db, 'articles');
+    const snapshot = await getDocs(articlesRef);
+    for (const d of snapshot.docs) {
+      const docRef = doc(db, 'articles', d.id);
+      const { deleteDoc } = await import('firebase/firestore');
+      await deleteDoc(docRef);
+    }
+    console.log(`📡 Cleared all ${snapshot.docs.length} articles from Firestore collection`);
+  } catch (err) {
+    console.error('Error clearing Firestore articles:', err);
+  }
+}

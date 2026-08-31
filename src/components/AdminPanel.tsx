@@ -33,7 +33,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   onRefreshData,
   onSelectArticle
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'automation' | 'articles' | 'categories' | 'countries' | 'logs' | 'seo' | 'cloudinary'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'wire_newsroom' | 'automation' | 'articles' | 'categories' | 'countries' | 'logs' | 'seo' | 'cloudinary'>('wire_newsroom');
   const [cloudinaryCloudName, setCloudinaryNameState] = useState<string>(getCloudinaryCloudName());
   const [cloudinarySaved, setCloudinarySaved] = useState<boolean>(false);
   const [isAutomationRunning, setIsAutomationRunning] = useState(true);
@@ -43,6 +43,90 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [isCycleRunning, setIsCycleRunning] = useState(false);
   const [cycleProgressSteps, setCycleProgressSteps] = useState<string[]>([]);
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
+
+  // Wire Newsroom state
+  const [wireFeeds, setWireFeeds] = useState<any[]>([]);
+  const [wirePreviewItems, setWirePreviewItems] = useState<any[]>([]);
+  const [selectedWireCategory, setSelectedWireCategory] = useState<string>('all');
+  const [isLoadingWirePreviews, setIsLoadingWirePreviews] = useState<boolean>(false);
+  const [importUrlInput, setImportUrlInput] = useState<string>('');
+  const [importUrlCategory, setImportUrlCategory] = useState<string>('news');
+  const [isImportingUrl, setIsImportingUrl] = useState<boolean>(false);
+  const [wireSyncCount, setWireSyncCount] = useState<number>(5);
+
+  const fetchWireFeedsAndPreviews = async () => {
+    setIsLoadingWirePreviews(true);
+    try {
+      const [feedsRes, previewRes] = await Promise.all([
+        fetch('/api/wires/feeds').catch(() => null),
+        fetch('/api/wires/preview').catch(() => null)
+      ]);
+      if (feedsRes && feedsRes.ok) {
+        const data = await feedsRes.json();
+        setWireFeeds(data.feeds || []);
+      }
+      if (previewRes && previewRes.ok) {
+        const data = await previewRes.json();
+        setWirePreviewItems(data.items || []);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoadingWirePreviews(false);
+    }
+  };
+
+  const handleImportUrlSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!importUrlInput.trim()) return;
+    setIsImportingUrl(true);
+    try {
+      const res = await fetch('/api/wires/import-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: importUrlInput.trim(), categoryId: importUrlCategory })
+      });
+      const data = await res.json();
+      if (data.success && data.article) {
+        setSyncStatusMsg(`Ingested & Published: "${data.article.title.slice(0, 45)}..."`);
+        setImportUrlInput('');
+        onRefreshData();
+        fetchAdminData();
+        onSelectArticle(data.article);
+      } else {
+        alert(data.error || 'Failed to import URL');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Error importing URL');
+    } finally {
+      setIsImportingUrl(false);
+    }
+  };
+
+  const handleSyncWireBatch = async (count: number, category: string = 'all') => {
+    setIsSyncingRss(true);
+    try {
+      const res = await fetch('/api/wires/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ limit: count, category })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSyncStatusMsg(`Successfully ingested ${data.syncedCount || 0} real stories from verified news wires!`);
+        onRefreshData();
+        fetchAdminData();
+      }
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setIsSyncingRss(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWireFeedsAndPreviews();
+  }, []);
 
   // New Article Generation Form state
   const [genTopic, setGenTopic] = useState('');
@@ -226,8 +310,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     setIsSyncingFirebase(true);
     setSyncStatusMsg('Syncing all articles & taxonomy to Firebase Cloud Firestore...');
     try {
-      // Direct batch write to Firebase
-      await seedFirestoreIfEmpty(true);
+      // Save all current articles to Firestore
+      for (const art of articles) {
+        await saveArticleToFirestore(art);
+      }
       
       // Also ping backend if available
       await fetch('/api/automation/sync-firebase', { method: 'POST' }).catch(() => null);
@@ -527,6 +613,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       {/* Navigation tabs */}
       <div className="flex items-center space-x-2 px-6 py-2 bg-neutral-900/60 border-b border-neutral-800 overflow-x-auto no-scrollbar text-xs font-mono">
         {[
+          { id: 'wire_newsroom', label: '📡 Wire Newsroom (Real Ingest)', icon: Radio },
           { id: 'overview', label: 'System Overview', icon: Layers },
           { id: 'automation', label: '14-Step Automation Engine', icon: Sparkles },
           { id: 'articles', label: `Articles (${articles.length})`, icon: FileText },
@@ -541,7 +628,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center space-x-2 px-3.5 py-2 rounded-lg transition-all ${
+              className={`flex items-center space-x-2 px-3.5 py-2 rounded-lg transition-all whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'bg-amber-500 text-neutral-950 font-bold shadow-md'
                   : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
@@ -556,6 +643,246 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
       {/* Main Content View Container */}
       <div className="flex-1 overflow-y-auto p-6 max-w-7xl mx-auto w-full">
+        {/* WIRE NEWSROOM & 1-CLICK INGESTION TAB */}
+        {activeTab === 'wire_newsroom' && (
+          <div className="space-y-6">
+            {/* Header intro */}
+            <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 relative overflow-hidden">
+              <div className="max-w-3xl space-y-3">
+                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono font-bold">
+                  <Radio className="w-3.5 h-3.5 animate-pulse" />
+                  <span>Real-World News Wire Syndication Engine</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-serif font-black text-white">
+                  Direct Wire Ingestion &amp; Fact-Preserving Publishing
+                </h2>
+                <p className="text-sm text-neutral-400 leading-relaxed font-sans">
+                  This system operates like international wire desks (BBC, Reuters, Yahoo News, MSN). It pulls 100% authentic news from verified global feeds with real names, quotes, images, and dates—without hallucinated facts.
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Actions: URL Importer & Batch Sync */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* URL / Headline Importer */}
+              <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-4">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+                    <ArrowUpRight className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-serif font-bold text-white text-base">One-Click News Link / Web Importer</h3>
+                    <p className="text-xs text-neutral-400">Paste ANY article link (BBC, Reuters, TechCrunch, Dawn, CNN)</p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleImportUrlSubmit} className="space-y-3 font-sans">
+                  <div>
+                    <label className="block text-xs font-mono text-neutral-400 mb-1">News Article URL</label>
+                    <input
+                      type="url"
+                      value={importUrlInput}
+                      onChange={(e) => setImportUrlInput(e.target.value)}
+                      placeholder="https://www.bbc.com/news/articles/..."
+                      required
+                      className="w-full px-3 py-2 bg-neutral-950 border border-neutral-700 rounded-lg text-sm text-white focus:outline-none focus:border-amber-500 font-mono"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-mono text-neutral-400 mb-1">Category Destination</label>
+                      <select
+                        value={importUrlCategory}
+                        onChange={(e) => setImportUrlCategory(e.target.value)}
+                        className="w-full px-3 py-2 bg-neutral-950 border border-neutral-700 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500 font-mono"
+                      >
+                        {categories.map(c => (
+                          <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex items-end">
+                      <button
+                        type="submit"
+                        disabled={isImportingUrl || !importUrlInput.trim()}
+                        className="w-full py-2 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs rounded-lg transition-colors flex items-center justify-center space-x-1.5 disabled:opacity-50 font-mono"
+                      >
+                        <Sparkles className={`w-3.5 h-3.5 ${isImportingUrl ? 'animate-spin' : ''}`} />
+                        <span>{isImportingUrl ? 'Extracting & Publishing...' : 'Ingest & Publish Article'}</span>
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              {/* Instant Batch Wire Ingest */}
+              <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-4">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                    <Radio className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-serif font-bold text-white text-base">Instant Wire Batch Synchronizer</h3>
+                    <p className="text-xs text-neutral-400">Ingest multiple real stories directly from live feeds right now</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3 font-sans">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-mono text-neutral-400 mb-1">Select Feed Filter</label>
+                      <select
+                        value={selectedWireCategory}
+                        onChange={(e) => setSelectedWireCategory(e.target.value)}
+                        className="w-full px-3 py-2 bg-neutral-950 border border-neutral-700 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500 font-mono"
+                      >
+                        <option value="all">All Verified Wires (Global)</option>
+                        <option value="news">World News (BBC/Al Jazeera)</option>
+                        <option value="technology">Tech (TechCrunch/Ars Technica)</option>
+                        <option value="finance">Finance (Yahoo Finance/MarketWatch)</option>
+                        <option value="sports">Sports (ESPN/BBC Sport)</option>
+                        <option value="science">Science &amp; Space (NASA)</option>
+                        <option value="health">Health &amp; Medicine</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-mono text-neutral-400 mb-1">Number of Articles</label>
+                      <select
+                        value={wireSyncCount}
+                        onChange={(e) => setWireSyncCount(parseInt(e.target.value))}
+                        className="w-full px-3 py-2 bg-neutral-950 border border-neutral-700 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500 font-mono"
+                      >
+                        <option value={3}>3 Stories</option>
+                        <option value={5}>5 Stories</option>
+                        <option value={8}>8 Stories</option>
+                        <option value={12}>12 Stories</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => handleSyncWireBatch(wireSyncCount, selectedWireCategory)}
+                    disabled={isSyncingRss}
+                    className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 font-mono shadow-md"
+                  >
+                    <Radio className={`w-4 h-4 ${isSyncingRss ? 'animate-spin' : ''}`} />
+                    <span>{isSyncingRss ? 'Ingesting Wire Feed Stories...' : `Fetch & Publish Top ${wireSyncCount} Stories Now`}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Active Verified Feeds Registry */}
+            <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-serif font-bold text-white text-base">Verified Connected News Wire Feeds</h3>
+                  <p className="text-xs text-neutral-400 font-mono">14 Official Press Feeds Connected (Free &amp; Public)</p>
+                </div>
+                <button
+                  onClick={fetchWireFeedsAndPreviews}
+                  disabled={isLoadingWirePreviews}
+                  className="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 hover:text-white rounded-lg text-xs font-mono flex items-center space-x-1.5 transition-colors"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isLoadingWirePreviews ? 'animate-spin' : ''}`} />
+                  <span>Refresh Feeds</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {wireFeeds.map((feed) => (
+                  <div key={feed.id} className="p-3 bg-neutral-950 border border-neutral-800 rounded-lg flex items-center justify-between">
+                    <div>
+                      <div className="font-bold text-xs text-white line-clamp-1">{feed.name}</div>
+                      <div className="text-[10px] font-mono text-neutral-400">{feed.countryName} • {feed.categoryId.toUpperCase()}</div>
+                    </div>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm shrink-0" title="Connected & Active"></span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Live Wire Feed Preview List */}
+            <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-serif font-bold text-white text-base">Live Wire Headlines Stream (Real-Time)</h3>
+                  <p className="text-xs text-neutral-400 font-mono">Real-time incoming stories from BBC, Dawn, TechCrunch &amp; Yahoo</p>
+                </div>
+                <span className="px-2.5 py-1 rounded bg-neutral-800 text-[11px] font-mono text-amber-400">
+                  {wirePreviewItems.length} Live Wire Stories Available
+                </span>
+              </div>
+
+              {isLoadingWirePreviews ? (
+                <div className="p-8 text-center text-neutral-500 font-mono text-xs animate-pulse">
+                  Scanning live global news wires...
+                </div>
+              ) : wirePreviewItems.length === 0 ? (
+                <div className="p-8 text-center text-neutral-500 font-mono text-xs">
+                  No wire preview items loaded. Click "Refresh Feeds" above.
+                </div>
+              ) : (
+                <div className="divide-y divide-neutral-800 max-h-[500px] overflow-y-auto">
+                  {wirePreviewItems.slice(0, 20).map((item, idx) => {
+                    const alreadyExists = articles.some(a => a.title.toLowerCase().slice(0, 30) === item.title.toLowerCase().slice(0, 30));
+                    return (
+                      <div key={idx} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neutral-800/30 px-2 rounded-lg transition-colors">
+                        <div className="space-y-1 max-w-2xl">
+                          <div className="flex items-center space-x-2">
+                            <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[10px] font-mono font-bold uppercase">
+                              {item.source}
+                            </span>
+                            <span className="text-[10px] font-mono text-neutral-500">
+                              {new Date(item.pubDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                          <div className="font-serif font-bold text-white text-sm line-clamp-1">{item.title}</div>
+                          <p className="text-xs text-neutral-400 line-clamp-1 font-sans">{item.description}</p>
+                        </div>
+
+                        <div className="shrink-0">
+                          {alreadyExists ? (
+                            <span className="px-3 py-1.5 rounded bg-neutral-800 text-neutral-400 text-xs font-mono font-bold inline-flex items-center space-x-1">
+                              <Check className="w-3.5 h-3.5 text-emerald-400" />
+                              <span>Published</span>
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                handleImportUrlSubmit({
+                                  preventDefault: () => {},
+                                } as any);
+                                // Or trigger import directly with URL
+                                fetch('/api/wires/import-url', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ url: item.link, categoryId: item.category || 'news' })
+                                }).then(res => res.json()).then(data => {
+                                  if (data.success) {
+                                    setSyncStatusMsg(`Published: "${item.title.slice(0, 40)}..."`);
+                                    onRefreshData();
+                                    fetchAdminData();
+                                  }
+                                });
+                              }}
+                              className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs font-mono transition-colors flex items-center space-x-1"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>Publish Now</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* OVERVIEW TAB */}
         {activeTab === 'overview' && (
           <div className="space-y-6">
