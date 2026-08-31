@@ -124,14 +124,19 @@ export default function App() {
       const countJson = countRes && countRes.ok ? await countRes.json() : null;
       const trendJson = trendRes && trendRes.ok ? await trendRes.json() : null;
 
-      if (artJson && Array.isArray(artJson)) {
-        setArticles(artJson);
-      } else {
-        const firestoreArts = await fetchArticlesFromFirestore();
-        if (firestoreArts && Array.isArray(firestoreArts)) {
-          setArticles(firestoreArts);
-        }
+      let loadedArticles: Article[] = [];
+      if (artJson && Array.isArray(artJson) && artJson.length > 0) {
+        loadedArticles = artJson;
       }
+      
+      const firestoreArts = await fetchArticlesFromFirestore();
+      if (firestoreArts && Array.isArray(firestoreArts) && firestoreArts.length > 0) {
+        const idMap = new Map<string, Article>();
+        loadedArticles.forEach(a => idMap.set(a.id, a));
+        firestoreArts.forEach(a => idMap.set(a.id, a));
+        loadedArticles = Array.from(idMap.values());
+      }
+      setArticles(loadedArticles);
 
       if (catJson && Array.isArray(catJson) && catJson.length > 0) setCategories(catJson);
       if (countJson && Array.isArray(countJson) && countJson.length > 0) setCountries(countJson);
@@ -140,7 +145,7 @@ export default function App() {
       // Parse initial route from browser URL
       syncRouteFromPath(
         window.location.pathname, 
-        artJson && artJson.length > 0 ? artJson : INITIAL_ARTICLES, 
+        loadedArticles.length > 0 ? loadedArticles : INITIAL_ARTICLES, 
         catJson && catJson.length > 0 ? catJson : INITIAL_CATEGORIES, 
         countJson && countJson.length > 0 ? countJson : INITIAL_COUNTRIES
       );
@@ -152,23 +157,13 @@ export default function App() {
   };
 
   useEffect(() => {
-    // Clear all old legacy articles from Firestore database to ensure 100% clean slate
-    const wipeInitialLegacyArticles = async () => {
-      try {
-        await clearAllArticlesFromFirestore();
-        await fetch('/api/articles/clear-all', { method: 'POST' }).catch(() => null);
-        setArticles([]);
-      } catch (err) {
-        console.warn('Initial cleanup error:', err);
-      }
-    };
-    wipeInitialLegacyArticles();
-
     fetchData();
 
     // Direct real-time listener to Firestore articles collection
     const unsubscribeFirestore = subscribeToFirestoreArticles((liveArticles) => {
-      setArticles(liveArticles || []);
+      if (liveArticles && liveArticles.length > 0) {
+        setArticles(liveArticles);
+      }
     });
 
     // Listen for browser Back and Forward history buttons

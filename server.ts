@@ -417,10 +417,6 @@ async function startServer() {
     });
   }
 
-  // Clean up any stale leftover articles on boot
-  db.clearAllArticles();
-  clearAllArticlesFromFirestoreServer().catch(() => null);
-
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`WorldPlus server running on http://0.0.0.0:${PORT} (Domain: worldplus.world)`);
   });

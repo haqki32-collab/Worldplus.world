@@ -88,6 +88,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       });
       const data = await res.json();
       if (data.success && data.article) {
+        await saveArticleToFirestore(data.article);
         setSyncStatusMsg(`Ingested & Published: "${data.article.title.slice(0, 45)}..."`);
         setImportUrlInput('');
         onRefreshData();
@@ -113,6 +114,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       });
       const data = await res.json();
       if (data.success) {
+        if (data.articles && Array.isArray(data.articles)) {
+          for (const art of data.articles) {
+            await saveArticleToFirestore(art);
+          }
+        }
         setSyncStatusMsg(`Successfully ingested ${data.syncedCount || 0} real stories from verified news wires!`);
         onRefreshData();
         fetchAdminData();
@@ -491,8 +497,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       }
 
       if (createdArticle) {
-        // Save directly to Firestore database!
+        // Save directly to Firestore database and local Express backend
         await saveArticleToFirestore(createdArticle);
+        await fetch('/api/articles', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(createdArticle)
+        }).catch(() => null);
 
         setIsGenerateModalOpen(false);
         setGenTopic('');
