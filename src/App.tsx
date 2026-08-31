@@ -23,7 +23,8 @@ import {
   subscribeToFirestoreArticles, 
   fetchArticlesFromFirestore, 
   likeArticleInFirestore, 
-  saveArticleToFirestore
+  saveArticleToFirestore,
+  clearAllArticlesFromFirestore
 } from './lib/firestoreClient.js';
 
 export default function App() {
@@ -151,6 +152,18 @@ export default function App() {
   };
 
   useEffect(() => {
+    // Clear all old legacy articles from Firestore database to ensure 100% clean slate
+    const wipeInitialLegacyArticles = async () => {
+      try {
+        await clearAllArticlesFromFirestore();
+        await fetch('/api/articles/clear-all', { method: 'POST' }).catch(() => null);
+        setArticles([]);
+      } catch (err) {
+        console.warn('Initial cleanup error:', err);
+      }
+    };
+    wipeInitialLegacyArticles();
+
     fetchData();
 
     // Direct real-time listener to Firestore articles collection
